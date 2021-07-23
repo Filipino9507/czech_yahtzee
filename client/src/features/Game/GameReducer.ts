@@ -69,11 +69,10 @@ const GameSlice = createSlice({
     reducers: {
         toggleSelectDice(
             state: GameState,
-            action: PayloadAction<{ id: number; selected: boolean }>
+            action: PayloadAction<number>
         ) {
-            const { id, selected } = action.payload;
-            const dice = state.dice.find((d) => d.id === id);
-            if (dice) dice.selected = selected;
+            const dice = state.dice.find((d) => d.id === action.payload);
+            if (dice) dice.selected = !dice.selected;
         },
     },
     extraReducers: {
@@ -98,10 +97,9 @@ const GameSlice = createSlice({
 export const getSelectedDice = (state: GameState) => state.dice.filter((d) => d.selected);
 
 export const diceSelector = (rollState?: DiceRollState) => (state: RootState) => {
-    if(!rollState)
-        return state.game.dice;
-    return state.game.dice.filter(d => d.rollState === rollState);
+    if (!rollState) return state.game.dice;
+    return state.game.dice.filter((d) => d.rollState === rollState);
 };
 
 export default GameSlice.reducer;
-export const {} = GameSlice.actions;
+export const { toggleSelectDice } = GameSlice.actions;
