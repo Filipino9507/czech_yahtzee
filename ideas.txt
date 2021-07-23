@@ -1,0 +1,4 @@
+Ideas:
+--> Yahtzee / Czech Yahtzee
+--> Sequencer
+--> Backgammon
