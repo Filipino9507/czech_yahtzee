@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "@types/socket.io": "^3.0.2",
+    "czech-yahtzee-shared": "file:../czech-yahtzee-shared",
     "express": "^4.17.1",
     "socket.io": "^4.1.3"
   },

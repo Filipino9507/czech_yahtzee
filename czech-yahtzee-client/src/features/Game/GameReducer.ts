@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, createAction, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import Player, { Scoreboard } from "models/player";
 import Loading from "models/loading";
 import Dice, { DiceValue, DiceRollState } from "models/dice";
@@ -51,46 +51,17 @@ const initialState = {
     },
 } as GameState;
 
-const getRollsAsync = createAsyncThunk("game/getRollsAsync", async (rollCount: number, _) => {
-    let rolls = new Array<DiceValue>(rollCount);
-    for (let i = 0; i < rollCount; ++i) {
-        rolls[i] = ((Math.random() % 6) + 1) as DiceValue;
-    }
-    return rolls;
-});
-
-const getGame = createAsyncThunk("game/getGame", async (id: string) => {
-    throw new Error("Not implemented.");
-});
-
 const GameSlice = createSlice({
     name: "game",
     initialState,
     reducers: {
-        toggleSelectDice(
-            state: GameState,
-            action: PayloadAction<number>
-        ) {
+        toggleSelectDice(state: GameState, action: PayloadAction<number>) {
             const dice = state.dice.find((d) => d.id === action.payload);
             if (dice) dice.selected = !dice.selected;
         },
     },
     extraReducers: {
-        [getRollsAsync.pending.type]: (state: GameState) => {
-            state.loadingStates.getRollsLoading = Loading.PENDING;
-        },
-        [getRollsAsync.fulfilled.type]: (state: GameState, action: PayloadAction<DiceValue[]>) => {
-            const rolls = action.payload;
-            const selectedDice = getSelectedDice(state);
-            for (let i = 0; i < rolls.length && i < selectedDice.length; ++i) {
-                selectedDice[i].value = rolls[i];
-                selectedDice[i].rollState = "ROLLED";
-            }
-            state.loadingStates.getRollsLoading = Loading.FULLFILLED;
-        },
-        [getRollsAsync.rejected.type]: (state: GameState) => {
-            state.loadingStates.getRollsLoading = Loading.REJECTED;
-        },
+        
     },
 });
 
@@ -101,5 +72,7 @@ export const diceSelector = (rollState?: DiceRollState) => (state: RootState) =>
     return state.game.dice.filter((d) => d.rollState === rollState);
 };
 
-export default GameSlice.reducer;
+export const addPlayerToNewRoom = createAction
 export const { toggleSelectDice } = GameSlice.actions;
+
+export default GameSlice.reducer;
