@@ -4,6 +4,10 @@ import { Box, Typography, Button } from "@material-ui/core";
 import CasinoIcon from "@material-ui/icons/Casino";
 import DoneSharpIcon from "@material-ui/icons/DoneSharp";
 
+import { useAppDispatch } from "app/hooks";
+import { addPlayerToNewRoom } from "../GameReducer";
+import { ScoreboardData } from "app/models";
+
 const useStyles = makeStyles((theme) => ({
     actionButton: {
         width: "8vh",
@@ -20,6 +24,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const DiceActions: React.FunctionComponent = () => {
+    const dispatch = useAppDispatch();
+
     const classes = useStyles();
     return (
         <Box>
@@ -34,6 +40,11 @@ const DiceActions: React.FunctionComponent = () => {
                     className={classes.actionButton}
                     variant="contained"
                     color="primary"
+                    onClick={() => dispatch(addPlayerToNewRoom({
+                        rolls: 1,
+                        extraRolls: 1,
+                        scoreboardData: {} as ScoreboardData
+                    }))}
                 >
                     <CasinoIcon className={classes.actionButtonIcon} />
                 </Button>

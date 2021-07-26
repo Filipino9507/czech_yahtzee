@@ -1,8 +1,7 @@
 import { createSlice, createAction, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import Player, { Scoreboard } from "models/player";
-import Loading from "models/loading";
-import Dice, { DiceValue, DiceRollState } from "models/dice";
+import { Player, ScoreboardData, Dice, DiceValue, DiceRollState, Loading } from "app/models";
 import { RootState } from "app/store";
+import PlayerDTO from "czech-yahtzee-shared/models/player/player-dto";
 
 interface GameState {
     /**
@@ -28,12 +27,12 @@ const initialState = {
         {
             rolls: 3,
             extraRolls: 0,
-            scoreboard: {} as Scoreboard,
+            scoreboardData: {} as ScoreboardData,
         },
         {
             rolls: 0,
             extraRolls: 0,
-            scoreboard: {} as Scoreboard,
+            scoreboardData: {} as ScoreboardData,
         },
     ],
     dice: [
@@ -60,9 +59,7 @@ const GameSlice = createSlice({
             if (dice) dice.selected = !dice.selected;
         },
     },
-    extraReducers: {
-        
-    },
+    extraReducers: {},
 });
 
 export const getSelectedDice = (state: GameState) => state.dice.filter((d) => d.selected);
@@ -72,7 +69,13 @@ export const diceSelector = (rollState?: DiceRollState) => (state: RootState) =>
     return state.game.dice.filter((d) => d.rollState === rollState);
 };
 
-export const addPlayerToNewRoom = createAction
+export const addPlayerToNewRoom = createAction<PlayerDTO>("server/addPlayerToNewRoom");
+export const addPlayerToExistingRoom = createAction<[PlayerDTO, string]>(
+    "server/addPlayerToExistingRoom"
+);
+export const removePlayerFromExistingRoom = createAction<string>(
+    "server/removePlayerFromExistingRoom"
+);
 export const { toggleSelectDice } = GameSlice.actions;
 
 export default GameSlice.reducer;

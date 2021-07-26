@@ -1,4 +1,4 @@
-import Player from "models/player";
+import PlayerDTO from "czech-yahtzee-shared/models/player/player-dto";
 import { Server, Socket } from "socket.io";
 
 const GAME_ID_CHARACTER_SET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -7,22 +7,24 @@ const GAME_ID_LENGTH = 4;
 
 let ioRef: Server;
 let sockets: Socket[] = [];
-let players: Record<string, Player> = {};
+let players: Record<string, PlayerDTO> = {};
 
 const onDisconnect = (socket: Socket) => {
     delete players[socket.id];
     sockets.splice(sockets.indexOf(socket), 1);
 }
 
-const onAddPlayerToNewRoom = (socket: Socket, player: Player) => {
+const onAddPlayerToNewRoom = (socket: Socket, player: PlayerDTO) => {
+    console.log("ON_ADD_PLAYER");
+    
     players[socket.id] = player;
     const roomId = generateRoomId();
     socket.join(roomId);
-    player.inGame = true;
-    socket.emit("PROVIDE_ROOM_ID", roomId);
+    // player.inGame = true;
+    socket.emit("provideRoomId", roomId);
 }
 
-const onAddPlayerToExistingRoom = (socket: Socket, player: Player, roomId: string) => {
+const onAddPlayerToExistingRoom = (socket: Socket, player: PlayerDTO, roomId: string) => {
     const room = getRooms().get(roomId);
     if (!room) {
         throw new Error(`No room with ID ${roomId} currently exists.`);
@@ -32,7 +34,7 @@ const onAddPlayerToExistingRoom = (socket: Socket, player: Player, roomId: strin
     }
     players[socket.id] = player;
     socket.join(roomId);
-    player.inGame = true;
+    // player.inGame = true;
 }
 
 const onRemovePlayerFromExistingRoom = (socket: Socket, roomId: string) => {
@@ -41,9 +43,9 @@ const onRemovePlayerFromExistingRoom = (socket: Socket, roomId: string) => {
     if (!room) {
         throw new Error(`No room with ID ${roomId} currently exists.`);
     }
-    if (!player.inGame) {
-        throw new Error("Player is not currently in any room.");
-    }
+    // if (!player.inGame) {
+    //     throw new Error("Player is not currently in any room.");
+    // }
     socket.leave(roomId);
 }
 
@@ -68,10 +70,10 @@ export const connectIOServer = (io: Server) => {
         sockets.push(socket);
 
         io.on("disconnect", () => onDisconnect(socket));
-        io.on("server/addPlayerToNewRoom", (player: Player) =>
+        io.on("server/addPlayerToNewRoom", (player: PlayerDTO) =>
             onAddPlayerToNewRoom(socket, player)
         );
-        io.on("server/addPlayerToExistingRoom", (player: Player, roomId: string) =>
+        io.on("server/addPlayerToExistingRoom", (player: PlayerDTO, roomId: string) =>
             onAddPlayerToExistingRoom(socket, player, roomId)
         );
         io.on("server/removePlayerFromExistingRoom", (roomId: string) =>
