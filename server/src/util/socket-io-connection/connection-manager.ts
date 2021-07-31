@@ -12,11 +12,17 @@ const getRooms = () => ioRef.sockets.adapter.rooms;
 const sockets: Socket[] = [];
 const players: Record<string, Player> = {};
 
+/**
+ * @deprecated
+ */
 const onDisconnect = (socket: Socket) => {
     delete players[socket.id];
     sockets.splice(sockets.indexOf(socket), 1);
 };
 
+/**
+ * @deprecated
+ */
 const onAddPlayerToNewRoom = (socket: Socket, userId?: string) => {
     players[socket.id] = new Player(userId);
     const roomId = generateRoomId(getRooms());
@@ -25,6 +31,9 @@ const onAddPlayerToNewRoom = (socket: Socket, userId?: string) => {
     socket.emit("action", { type: MatchmakerTCA.PROVIDE_ROOM_ID, payload: roomId });
 };
 
+/**
+ * @deprecated
+ */
 const onAddPlayerToExistingRoom = (socket: Socket, roomId: string, userId?: string) => {
     const room = getRooms().get(roomId);
     if (!room) {
@@ -51,6 +60,9 @@ const onAddPlayerToExistingRoom = (socket: Socket, roomId: string, userId?: stri
     // player.inGame = true;
 };
 
+/**
+ * @deprecated
+ */
 const onRemovePlayerFromExistingRoom = (socket: Socket, roomId: string) => {
     const player = players[socket.id];
     const room = getRooms().get(roomId);
@@ -66,6 +78,9 @@ const onRemovePlayerFromExistingRoom = (socket: Socket, roomId: string) => {
     socket.leave(roomId);
 };
 
+/**
+ * @deprecated
+ */
 const onAction = (socket: Socket, action: DataTransferAction) => {
     switch (action.type) {
         case MatchmakerTSA.ADD_PLAYER_TO_NEW_ROOM: {
@@ -96,6 +111,9 @@ const onAction = (socket: Socket, action: DataTransferAction) => {
     }
 };
 
+/**
+ * @deprecated
+ */
 export const connectIOServer = (io: Server) => {
     ioRef = io;
     io.on("connection", (socket) => {

@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import useGlobalStyles from "@app/globalStyles";
 import { Box, Button, Divider, TextField, Typography } from "@material-ui/core";
 
-import { useAppDispatch, useAppSelector } from "@app/hooks";
-import { addPlayerToExistingRoom, roomIdSelector } from "../MatchmakerReducer";
+import { useAppDispatch } from "@app/hooks";
+import { addPlayerToExistingRoom } from "../MatchmakerReducer";
 
 interface Props {
     onGoBack: () => void;
@@ -13,8 +13,7 @@ const MatchmakerJoinExistingGame: React.FunctionComponent<Props> = ({ onGoBack }
     const dispatch = useAppDispatch();
 
     const [roomId, setRoomId] = useState<string>("");
-
-    const handleCodeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleRoomIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = event.target.value.toUpperCase();
         if (newValue.length <= 4 && /^[A-Z]*$/.test(newValue)) {
             setRoomId(newValue);
@@ -43,7 +42,7 @@ const MatchmakerJoinExistingGame: React.FunctionComponent<Props> = ({ onGoBack }
             <TextField
                 className={classes.mediumMargin}
                 value={roomId}
-                onChange={handleCodeChange}
+                onChange={handleRoomIdChange}
                 variant="outlined"
                 inputProps={{
                     style: { textAlign: "center", fontSize: 30 },

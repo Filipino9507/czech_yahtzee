@@ -1,4 +1,4 @@
-import { Server, Socket } from "socket.io";
+import { Socket } from "socket.io";
 import DataTransferAction from "cys/models/misc/data-transfer-action";
 import SocketIOConnectionManager from "./socket-io-connection-manager";
 

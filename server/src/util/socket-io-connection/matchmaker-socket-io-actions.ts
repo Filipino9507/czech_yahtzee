@@ -2,7 +2,7 @@ import { Socket } from "socket.io";
 import DataTransferAction from "cys/models/misc/data-transfer-action";
 import Player from "cys/models/game/player";
 import { MatchmakerTSA } from "cys/connection/to-server-actions";
-import { MatchmakerTCA, MiscTCA } from "cys/connection/to-client-actions";
+import { MatchmakerTCA } from "cys/connection/to-client-actions";
 import SocketIOActions from "./socket-io-actions";
 import { generateRoomId } from "./rooms";
 import CYSocketIOError from "@models/cy-socket-io-error";
