@@ -15,4 +15,5 @@ export const generateRoomId = (rooms: Rooms) => {
     return roomId;
 };
 
-export type Rooms = Map<string, Set<string>>;
+export type Room = Set<string>;
+export type Rooms = Map<string, Room>;

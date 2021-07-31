@@ -15,6 +15,7 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
+    "noImplicitOverride": true,
     "baseUrl": "./src",
     "paths": {
         "@controllers/*": ["./controllers/*"],

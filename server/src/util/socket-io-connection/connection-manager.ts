@@ -4,7 +4,7 @@ import { MatchmakerTSA } from "cys/connection/to-server-actions";
 import { MatchmakerTCA, MiscTCA } from "cys/connection/to-client-actions";
 import { Server, Socket } from "socket.io";
 
-import CYSocketIoError from "@models/cy-socket-io-error";
+import CYSocketIOError from "@models/cy-socket-io-error";
 import { generateRoomId } from "./rooms";
 
 let ioRef: Server;
@@ -28,13 +28,13 @@ const onAddPlayerToNewRoom = (socket: Socket, userId?: string) => {
 const onAddPlayerToExistingRoom = (socket: Socket, roomId: string, userId?: string) => {
     const room = getRooms().get(roomId);
     if (!room) {
-        throw new CYSocketIoError(
+        throw new CYSocketIOError(
             `No room with ID ${roomId} currently exists.`,
             MatchmakerTCA.ERROR
         );
     }
     if (room.size !== 1) {
-        throw new CYSocketIoError(
+        throw new CYSocketIOError(
             `Room with ID ${roomId} must have exactly one player.`,
             MatchmakerTCA.ERROR
         );
@@ -55,7 +55,7 @@ const onRemovePlayerFromExistingRoom = (socket: Socket, roomId: string) => {
     const player = players[socket.id];
     const room = getRooms().get(roomId);
     if (!room) {
-        throw new CYSocketIoError(
+        throw new CYSocketIOError(
             `No room with ID ${roomId} currently exists.`,
             MatchmakerTCA.ERROR
         );
@@ -89,7 +89,7 @@ const onAction = (socket: Socket, action: DataTransferAction) => {
              * try / catch, since Socket.io has no built-in
              * error handling
              */
-            throw new CYSocketIoError(
+            throw new CYSocketIOError(
                 `Socket action ${action.type} not implemented.`,
                 MiscTCA.ERROR
             );
@@ -105,7 +105,7 @@ export const connectIOServer = (io: Server) => {
             try {
                 onAction(socket, action);
             } catch (err) {
-                if (err instanceof CYSocketIoError) {
+                if (err instanceof CYSocketIOError) {
                     socket.emit("action", { type: err.actionType, payload: err.message });
                 } else {
                     console.log("!!! UNKNOWN ERROR !!!");
