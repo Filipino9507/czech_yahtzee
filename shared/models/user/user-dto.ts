@@ -1,4 +1,14 @@
-export default class UserDTO {
+import SerializableConvertible from "../seriazable-convertible";
+
+export interface UserDTOSerializable {
+    id: string;
+    username: string;
+    password: string;
+    inGame: boolean;
+    loggedIn: boolean;
+}
+
+export default class UserDTO implements SerializableConvertible<UserDTOSerializable> {
     public id: string;
     public username: string;
     public password: string;
@@ -11,5 +21,9 @@ export default class UserDTO {
         this.password = password;
         this.inGame = false;
         this.loggedIn = false;
+    }
+
+    public toSerializable(): UserDTOSerializable {
+        return { ...this } as UserDTOSerializable;
     }
 }

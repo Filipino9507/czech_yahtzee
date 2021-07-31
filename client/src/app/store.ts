@@ -1,16 +1,30 @@
 import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
 import createSocketIoMiddleware from "redux-socket.io";
 import io from "socket.io-client";
-import GameReducer from "../features/Game/GameReducer";
+import GameReducer from "@features/Game/GameReducer";
+import MatchmakerReducer from "@features/Matchmaker/MatchmakerReducer";
 
 const socket = io("http://localhost:80");
 const socketIoMiddleware = createSocketIoMiddleware(socket, "server/");
 
+// @ts-ignore
+const loggerMiddleware = (store) => (next) => (action) => {
+    console.group(action.type);
+    console.info("dispatching", action);
+    let result = next(action);
+    console.log("next state", store.getState());
+    console.groupEnd();
+    return result;
+};
+
 export const store = configureStore({
     reducer: {
         game: GameReducer,
+        matchmaker: MatchmakerReducer,
     },
-    middleware: [socketIoMiddleware],
+    // middleware: [socketIoMiddleware, loggerMiddleware],
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware()
+        .concat([socketIoMiddleware, loggerMiddleware])
 });
 
 export type AppDispatch = typeof store.dispatch;

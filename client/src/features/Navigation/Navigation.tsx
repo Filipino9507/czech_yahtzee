@@ -12,6 +12,9 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
+/**
+ * Navigation bar containing basic options for places to go
+ */
 const Navigation: React.FunctionComponent = () => {
     const classes = useStyles();
     return (
@@ -20,7 +23,7 @@ const Navigation: React.FunctionComponent = () => {
                 <Toolbar>
                     <Typography className={classes.title} variant="h6">Yahtzee</Typography>
                     <Button variant="text" color="secondary" component={Link} to="/matchmaker">
-                        New Game
+                        Join Game
                     </Button>
                     <Button variant="text" color="secondary" component={Link} to="/settings">
                         Settings

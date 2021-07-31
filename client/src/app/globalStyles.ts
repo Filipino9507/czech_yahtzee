@@ -1,15 +1,15 @@
-import { makeStyles } from "@material-ui/core";
+import { makeStyles, Theme } from "@material-ui/core";
 
 const useGlobalStyles = makeStyles((theme) => ({
-    buttonSmallMargin: {
+    smallMargin: {
         margin: theme.spacing(0.5),
     },
-    buttonMediumMargin: {
+    mediumMargin: {
         margin: theme.spacing(1),
     },
-    buttonLargeMargin: {
+    largeMargin: {
         margin: theme.spacing(2),
-    }
+    },
 }));
 
 export default useGlobalStyles;

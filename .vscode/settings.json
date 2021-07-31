@@ -1,4 +1,18 @@
 {
     "editor.fontSize": 13,
-    "editor.fontFamily": "'Fira Code', Monaco, 'Courier New', monospace"
+    "editor.fontFamily": "'Fira Code', Monaco, 'Courier New', monospace",
+    "restoreTerminals.terminals": [
+        {
+            "splitTerminals": [
+                {
+                    "name": "client",
+                    "commands": ["cd client", "npm run dev"]
+                },
+                {
+                    "name": "server",
+                    "commands": ["cd server", "npm run dev"]
+                }
+            ]
+        }
+    ]
 }

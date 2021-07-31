@@ -1,13 +1,17 @@
+import SerializableConvertible from "../seriazable-convertible";
 import Dice from "./dice";
-import Player from "./player";
-import ScoreboardData from "./scoreboard-data";
+import Player, { PlayerSerializable } from "./player";
+import GameConfig from "./game-config";
 
-export interface GameConfig {
+export interface GameDTOSerializable {
     playerCount: number;
+    playerTurn: number;
+    playerStates: PlayerSerializable[];
     diceCount: number;
+    dice: Dice[];
 }
 
-export default class GameDTO {
+export default class GameDTO implements SerializableConvertible<GameDTOSerializable> {
     public playerCount: number;
     public playerTurn: number;
     public playerStates: Player[];
@@ -27,12 +31,7 @@ export default class GameDTO {
         }
         this.playerStates = new Array(this.playerCount);
         for (let i = 0; i < this.playerCount; i++) {
-            this.playerStates[i] = {
-                rolls: 0,
-                extraRolls: 0,
-                scoreboardData: new ScoreboardData(),
-                userId: playerIds[i],
-            };
+            this.playerStates[i] = new Player(playerIds[i]);
         }
 
         this.diceCount = config.diceCount;
@@ -44,5 +43,15 @@ export default class GameDTO {
                 rollState: "IDLE",
             };
         }
+    }
+
+    public toSerializable(): GameDTOSerializable {
+        const serializablePlayerStates = this.playerStates.map(
+            (playerState) => playerState.toSerializable()
+        );
+        return {
+            ...this,
+            playerStates: serializablePlayerStates,
+        } as GameDTOSerializable;
     }
 }

@@ -1,9 +1,8 @@
 import { createSlice, createAction, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "app/store";
-import Player from "cys/models/game/player";
+import { RootState } from "@app/store";
+import Player, { PlayerSerializable } from "cys/models/game/player";
 import ScoreboardData from "cys/models/game/scoreboard-data";
 import Dice from "cys/models/game/dice";
-import DiceValue from "cys/models/game/dice-value";
 import DiceRollState from "cys/models/game/dice-roll-state";
 
 export type DiceState = Dice & { selected: boolean };
@@ -14,7 +13,7 @@ export interface GameState {
      */
     playerCount: number;
     playerTurn: number;
-    playerStates: Player[];
+    playerStates: PlayerSerializable[];
 
     dice: DiceState[];
 }
@@ -22,18 +21,7 @@ export interface GameState {
 const initialState = {
     playerCount: 2,
     playerTurn: 0,
-    playerStates: [
-        {
-            rolls: 3,
-            extraRolls: 0,
-            scoreboardData: new ScoreboardData(),
-        },
-        {
-            rolls: 0,
-            extraRolls: 0,
-            scoreboardData: new ScoreboardData(),
-        },
-    ],
+    playerStates: [new Player().toSerializable(), new Player().toSerializable()],
     dice: [
         { id: 0, value: 1, rollState: "IDLE", selected: false },
         { id: 1, value: 1, rollState: "IDLE", selected: false },
@@ -44,17 +32,6 @@ const initialState = {
     ],
     selectedDice: [],
 } as GameState;
-
-export const addPlayerToNewRoom = createAction<{
-    userId?: string;
-}>("server/addPlayerToNewRoom");
-export const addPlayerToExistingRoom = createAction<{
-    roomId: string;
-    userId?: string;
-}>("server/addPlayerToExistingRoom");
-export const removePlayerFromExistingRoom = createAction<{
-    roomId: string;
-}>("server/removePlayerFromExistingRoom");
 
 const GameSlice = createSlice({
     name: "game",

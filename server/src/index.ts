@@ -1,10 +1,11 @@
-import express from "express";
+import express, { Response } from "express";
 import http from "http";
 import { Server } from "socket.io";
 import cors from "cors";
 
-import { connectIOServer } from "./util/connection-manager";
-import { SERVER_PORT, CORS_CONFIG } from "./util/const";
+import { connectIOServer } from "@util/connection-manager";
+import { SERVER_PORT, CORS_CONFIG } from "@util/const";
+import CYExpressError from "@models/cy-express-error";
 
 const app = express();
 const server = http.createServer(app);
@@ -14,6 +15,10 @@ app.use(cors(CORS_CONFIG));
 
 app.get("/", (req, res) => {
     res.status(200).send("Server works...");
+});
+
+app.use((err: CYExpressError, req: any, res: Response, next: any) => {
+    res.status(err.status).send(err.message);
 });
 
 connectIOServer(io);

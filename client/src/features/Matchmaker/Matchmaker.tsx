@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Box, Button, Card, makeStyles } from "@material-ui/core";
+import MatchmakerIdle from "./components/MatchmakerIdle";
+import MatchmakerCreateNewGame from "./components/MatchmakerCreateNewGame";
 import MatchmakerJoinExistingGame from "./components/MatchmakerJoinExistingGame.tsx";
 
 const useStyles = makeStyles((theme) => ({
@@ -20,9 +22,18 @@ const Matchmaker: React.FunctionComponent = () => {
         "IDLE" | "CREATE_NEW_GAME" | "JOIN_EXISTING_GAME"
     >("IDLE");
     const getMatchmakerContent = () => {
-        switch(matchmakerState) {
+        switch (matchmakerState) {
             case "IDLE":
-                return <div />;
+                return (
+                    <MatchmakerIdle
+                        onCreateNewGame={() => setMatchmakerState("CREATE_NEW_GAME")}
+                        onJoinExistingGame={() => setMatchmakerState("JOIN_EXISTING_GAME")}
+                    />
+                );
+            case "CREATE_NEW_GAME":
+                return <MatchmakerCreateNewGame onGoBack={() => setMatchmakerState("IDLE")} />;
+            case "JOIN_EXISTING_GAME":
+                return <MatchmakerJoinExistingGame onGoBack={() => setMatchmakerState("IDLE")} />;
         }
     };
 
@@ -38,12 +49,7 @@ const Matchmaker: React.FunctionComponent = () => {
                 display="flex"
             >
                 <Box width="30%" height="50%">
-                    <Button className={classes.button} variant="contained" color="secondary">
-                        Create a new game
-                    </Button>
-                    <Button className={classes.button} variant="outlined" color="secondary">
-                        Join an existing game
-                    </Button>
+                    {getMatchmakerContent()}
                 </Box>
             </Box>
         </Card>

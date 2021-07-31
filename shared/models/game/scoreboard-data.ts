@@ -1,23 +1,50 @@
+import SerializableConvertible from "../seriazable-convertible";
 import Score from "./score";
 
-export default class ScoreboardData {
-    public ones: Score = { value: 0, passed: false };
-    public twos: Score = { value: 0, passed: false };
-    public threes: Score = { value: 0, passed: false };
-    public fours: Score = { value: 0, passed: false };
-    public fives: Score = { value: 0, passed: false };
-    public sixes: Score = { value: 0, passed: false };
+const init = (): Score => ({ value: 0, passed: false });
 
-    public small: Score = { value: 0, passed: false };
-    public large: Score = { value: 0, passed: false };
-    public odd: Score = { value: 0, passed: false };
-    public even: Score = { value: 0, passed: false };
-    public doubles: Score = { value: 0, passed: false };
-    public triples: Score = { value: 0, passed: false };
+export interface ScoreboardDataSerializable {
+    ones: Score;
+    twos: Score;
+    threes: Score;
+    fours: Score;
+    fives: Score;
+    sixes: Score;
+    small: Score;
+    large: Score;
+    odd: Score;
+    even: Score;
+    doubles: Score;
+    triples: Score;
+    smallTriangle: Score;
+    largeTriangle: Score;
+    run: Score;
+    poker: Score;
+    general: Score;
+}
 
-    public smallTriangle: Score = { value: 0, passed: false };
-    public largeTriangle: Score = { value: 0, passed: false };
-    public run: Score = { value: 0, passed: false };
-    public poker: Score = { value: 0, passed: false };
-    public general: Score = { value: 0, passed: false };
+export default class ScoreboardData implements SerializableConvertible<ScoreboardDataSerializable> {
+    public ones: Score = init();
+    public twos: Score = init();
+    public threes: Score = init();
+    public fours: Score = init();
+    public fives: Score = init();
+    public sixes: Score = init();
+
+    public small: Score = init();
+    public large: Score = init();
+    public odd: Score = init();
+    public even: Score = init();
+    public doubles: Score = init();
+    public triples: Score = init();
+
+    public smallTriangle: Score = init();
+    public largeTriangle: Score = init();
+    public run: Score = init();
+    public poker: Score = init();
+    public general: Score = init();
+
+    public toSerializable(): ScoreboardDataSerializable {
+        return { ...this } as ScoreboardDataSerializable;
+    } 
 }

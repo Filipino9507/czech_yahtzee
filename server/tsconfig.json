@@ -15,14 +15,15 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
-    "baseUrl": "src",
+    "baseUrl": "./src",
+    "paths": {
+        "@controllers/*": ["./controllers/*"],
+        "@models/*": ["./models/*"],
+        "@routes/*": ["./routes/*"],
+        "@util/*": ["./util/*"]
+    }
   },
   "include": [
-      "src",
+      "src/**/*",
   ],
-  "references": [
-    {
-      "path": "../shared"
-    }
-  ]
 }

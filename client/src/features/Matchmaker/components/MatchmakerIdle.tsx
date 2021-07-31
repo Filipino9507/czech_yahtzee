@@ -1,22 +1,36 @@
 import React from "react";
-import { Button, makeStyles } from "@material-ui/core";
+import { Box, Button } from "@material-ui/core";
 import useGlobalStyles from "@app/globalStyles";
 
-const useStyles = makeStyles((theme) => ({
-    
-}));
+interface Props {
+    onCreateNewGame: () => void;
+    onJoinExistingGame: () => void;
+}
 
-const MatchmakerIdle: React.FunctionComponent = () => {
-    const classes = { ...useStyles(), ...useGlobalStyles() };
+const MatchmakerIdle: React.FunctionComponent<Props> = ({
+    onCreateNewGame,
+    onJoinExistingGame,
+}: Props) => {
+    const classes = useGlobalStyles();
     return (
-        <React.Fragment>
-            <Button className={classes.button} variant="contained" color="secondary">
+        <Box display="flex" flexDirection="column">
+            <Button
+                className={classes.mediumMargin}
+                variant="contained"
+                color="secondary"
+                onClick={onCreateNewGame}
+            >
                 Create a new game
             </Button>
-            <Button className={classes.button} variant="outlined" color="secondary">
+            <Button
+                className={classes.mediumMargin}
+                variant="contained"
+                color="secondary"
+                onClick={onJoinExistingGame}
+            >
                 Join an existing game
             </Button>
-        </React.Fragment>
+        </Box>
     );
 };
 

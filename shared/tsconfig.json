@@ -9,6 +9,7 @@
     "outDir": "./dist",
     "composite": true,
     "declaration": true,
-    "declarationMap": true
+    "declarationMap": true,
+    "noImplicitOverride": true
   }
 }

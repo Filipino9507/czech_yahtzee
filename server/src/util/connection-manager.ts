@@ -1,93 +1,121 @@
 import Player from "cys/models/game/player";
 import DataTransferAction from "cys/models/misc/data-transfer-action";
+import { MatchmakerTSA } from "cys/connection/to-server-actions";
+import { MatchmakerTCA, MiscTCA } from "cys/connection/to-client-actions";
 import { Server, Socket } from "socket.io";
 
-const GAME_ID_CHARACTER_SET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-const GAME_ID_CHARACTER_SET_SIZE = GAME_ID_CHARACTER_SET.length;
-const GAME_ID_LENGTH = 4;
+import CYSocketIoError from "@models/cy-socket-io-error";
+import { generateRoomId } from "./rooms";
 
 let ioRef: Server;
-let sockets: Socket[] = [];
-let players: Record<string, Player> = {};
+const getRooms = () => ioRef.sockets.adapter.rooms;
+const sockets: Socket[] = [];
+const players: Record<string, Player> = {};
 
 const onDisconnect = (socket: Socket) => {
     delete players[socket.id];
     sockets.splice(sockets.indexOf(socket), 1);
-}
+};
 
 const onAddPlayerToNewRoom = (socket: Socket, userId?: string) => {
     players[socket.id] = new Player(userId);
-    const roomId = generateRoomId();
+    const roomId = generateRoomId(getRooms());
     socket.join(roomId);
     // player.inGame = true;
-    socket.emit("provideRoomId", roomId);
-}
+    socket.emit("action", { type: MatchmakerTCA.PROVIDE_ROOM_ID, payload: roomId });
+};
 
 const onAddPlayerToExistingRoom = (socket: Socket, roomId: string, userId?: string) => {
     const room = getRooms().get(roomId);
     if (!room) {
-        throw new Error(`No room with ID ${roomId} currently exists.`);
+        throw new CYSocketIoError(
+            `No room with ID ${roomId} currently exists.`,
+            MatchmakerTCA.ERROR
+        );
     }
     if (room.size !== 1) {
-        throw new Error(`Room with ID ${roomId} must have exactly one player.`);
+        throw new CYSocketIoError(
+            `Room with ID ${roomId} must have exactly one player.`,
+            MatchmakerTCA.ERROR
+        );
     }
     players[socket.id] = new Player(userId);
     socket.join(roomId);
+
+    room.forEach((socketId) => {
+        /**
+         * For each socket, emit START_GAME
+         */
+    });
+    socket.emit("action", { type: MatchmakerTCA.START_GAME, payload: {} });
     // player.inGame = true;
-}
+};
 
 const onRemovePlayerFromExistingRoom = (socket: Socket, roomId: string) => {
     const player = players[socket.id];
     const room = getRooms().get(roomId);
     if (!room) {
-        throw new Error(`No room with ID ${roomId} currently exists.`);
+        throw new CYSocketIoError(
+            `No room with ID ${roomId} currently exists.`,
+            MatchmakerTCA.ERROR
+        );
     }
     // if (!player.inGame) {
     //     throw new Error("Player is not currently in any room.");
     // }
     socket.leave(roomId);
-}
+};
 
-const generateRoomId = () => {
-    let roomId;
-    do {
-        roomId = "";
-        for (let i = 0; i < GAME_ID_LENGTH; ++i) {
-            roomId += GAME_ID_CHARACTER_SET.charAt(
-                Math.floor(Math.random() * GAME_ID_CHARACTER_SET_SIZE)
-            );
+const onAction = (socket: Socket, action: DataTransferAction) => {
+    switch (action.type) {
+        case MatchmakerTSA.ADD_PLAYER_TO_NEW_ROOM: {
+            const { userId } = action.payload;
+            onAddPlayerToNewRoom(socket, userId);
+            break;
         }
-    } while (getRooms().has(roomId));
-    return roomId;
-}
-
-const getRooms = () => ioRef.sockets.adapter.rooms;
+        case MatchmakerTSA.ADD_PLAYER_TO_EXISTING_ROOM: {
+            const { roomId, userId } = action.payload;
+            onAddPlayerToExistingRoom(socket, roomId, userId);
+            break;
+        }
+        case MatchmakerTSA.REMOVE_PLAYER_FROM_EXISTING_ROOM: {
+            const { roomId } = action.payload;
+            onRemovePlayerFromExistingRoom(socket, roomId);
+            break;
+        }
+        default:
+            /**
+             * Errors like this need to be ALL handled with
+             * try / catch, since Socket.io has no built-in
+             * error handling
+             */
+            throw new CYSocketIoError(
+                `Socket action ${action.type} not implemented.`,
+                MiscTCA.ERROR
+            );
+    }
+};
 
 export const connectIOServer = (io: Server) => {
     ioRef = io;
     io.on("connection", (socket) => {
         sockets.push(socket);
-
-        socket.on("disconnect", () => onDisconnect(socket))
+        socket.on("disconnect", () => onDisconnect(socket));
         socket.on("action", (action: DataTransferAction) => {
-            switch(action.type) {
-                case "server/addPlayerToNewRoom": {
-                    const { userId } = action.data;
-                    onAddPlayerToNewRoom(socket, userId);
-                    break;
-                }  
-                case "server/addPlayerToExistingRoom": {
-                    const { roomId, userId } = action.data;
-                    onAddPlayerToExistingRoom(socket, roomId, userId);
+            try {
+                onAction(socket, action);
+            } catch (err) {
+                if (err instanceof CYSocketIoError) {
+                    socket.emit("action", { type: err.actionType, payload: err.message });
+                } else {
+                    console.log("!!! UNKNOWN ERROR !!!");
+                    console.log(err.message);
+                    socket.emit("action", {
+                        type: MiscTCA.ERROR,
+                        payload: "An unknown error occured.",
+                    });
                 }
-                case "server/removePlayerFromExistingRoom": {
-                    const { roomId } = action.data;
-                    onRemovePlayerFromExistingRoom(socket, roomId);
-                }
-                default:
-                    throw new Error("Socket action not implemented.");
             }
         });
-        
     });
 };
