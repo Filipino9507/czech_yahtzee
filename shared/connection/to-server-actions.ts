@@ -11,5 +11,7 @@ export namespace MatchmakerTSA {
 }
 
 export namespace GameTSA {
-
+    export const ROLL_DICE = BASE + "rollDice";
+    export const LOCK_IN_DICE = BASE + "lockInDice";
+    export const FINISH_TURN = BASE + "finishTurn";
 }

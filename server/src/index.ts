@@ -3,10 +3,8 @@ import http from "http";
 import { Server } from "socket.io";
 import cors from "cors";
 
-import { connectIOServer } from "@util/socket-io-connection/connection-manager";
-
-import SocketIOConnectionManager from "@util/socket-io-connection/socket-io-connection-manager";
-import { SERVER_PORT, CORS_CONFIG } from "@util/const";
+import SocketIOConnectionManager from "@util/socket-io/socket-io-connection-manager";
+import { SERVER_PORT, CORS_CONFIG } from "@util/socket-io/const";
 import CYExpressError from "@models/cy-express-error";
 
 const app = express();

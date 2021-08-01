@@ -3,16 +3,19 @@ import { RootState } from "@app/store";
 import { MatchmakerTSA } from "cys/connection/to-server-actions";
 
 export interface MatchmakerState {
+    inGame: boolean;
     roomId: string | null;
     errorMessage: string;
 }
 
 const initialState = {
+    inGame: false,
     roomId: null,
     errorMessage: "",
 } as MatchmakerState;
 
 export const roomIdSelector = (state: RootState) => state.matchmaker.roomId;
+export const inGameSelector = (state: RootState) => state.matchmaker.inGame;
 
 export const addPlayerToNewRoom = createAction<{
     userId?: string;
@@ -32,22 +35,18 @@ const MatchmakerSlice = createSlice({
     name: "matchmaker",
     initialState,
     reducers: {
+        // To-client socket.io actions
         provideRoomId(state: MatchmakerState, action: PayloadAction<string>) {
             state.roomId = action.payload;
         },
-        startGame(state: MatchmakerState) {
-            /**
-             * Start the game (need to figure out how
-             * to do this in the other reducer)
-             */
-            alert("Game started...");
+        setInGameStatus(state: MatchmakerState, action: PayloadAction<boolean>) {
+            state.inGame = action.payload;
         },
-
         error(state: MatchmakerState, action: PayloadAction<string>) {
             const errorMessage = action.payload;
             state.errorMessage = errorMessage;
             alert(errorMessage);
-        }
+        },
     },
     extraReducers: {},
 });

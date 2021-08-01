@@ -22,7 +22,7 @@ const MatchmakerCreateNewGame: React.FunctionComponent<Props> = ({ onGoBack }: P
     }, []);
 
     const handleCancel = () => {
-        dispatch(removePlayerFromExistingRoom({ roomId }))
+        dispatch(removePlayerFromExistingRoom({ roomId }));
         onGoBack();
     };
 

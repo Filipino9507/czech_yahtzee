@@ -1,8 +1,8 @@
 import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
 import createSocketIoMiddleware from "redux-socket.io";
 import io from "socket.io-client";
-import GameReducer from "@features/Game/GameReducer";
-import MatchmakerReducer from "@features/Matchmaker/MatchmakerReducer";
+import GameReducer from "@features/game/GameReducer";
+import MatchmakerReducer from "@features/matchmaker/MatchmakerReducer";
 
 const socket = io("http://localhost:80");
 const socketIoMiddleware = createSocketIoMiddleware(socket, "server/");

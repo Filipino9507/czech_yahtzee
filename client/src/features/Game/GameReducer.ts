@@ -1,20 +1,17 @@
 import { createSlice, createAction, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "@app/store";
+import { GameDTOSerializable } from "cys/models/game/game-dto";
 import Player, { PlayerSerializable } from "cys/models/game/player";
-import ScoreboardData from "cys/models/game/scoreboard-data";
 import Dice from "cys/models/game/dice";
 import DiceRollState from "cys/models/game/dice-roll-state";
 
 export type DiceState = Dice & { selected: boolean };
 
 export interface GameState {
-    /**
-     * Part of GameDTO
-     */
     playerCount: number;
     playerTurn: number;
     playerStates: PlayerSerializable[];
-
+    diceCount: number;
     dice: DiceState[];
 }
 
@@ -30,13 +27,22 @@ const initialState = {
         { id: 4, value: 1, rollState: "IDLE", selected: false },
         { id: 5, value: 1, rollState: "IDLE", selected: false },
     ],
-    selectedDice: [],
 } as GameState;
 
 const GameSlice = createSlice({
     name: "game",
     initialState,
     reducers: {
+        // To-client socket.io actions
+        provideGameState(state: GameState, action: PayloadAction<GameDTOSerializable>) {
+            const gameState = action.payload;
+            const dice = gameState.dice.map((d, idx) => ({
+                ...d,
+                selected: state.dice[idx].selected,
+            }));
+            state = { ...action.payload, dice };
+        },
+        // Local actions
         toggleSelectDice(state: GameState, action: PayloadAction<number>) {
             const dice = state.dice.find((d) => d.id === action.payload);
             if (dice) dice.selected = !dice.selected;
