@@ -8,12 +8,12 @@ import { useAppSelector } from "@app/hooks";
 import { inGameSelector } from "@features/matchmaker/MatchmakerReducer";
 
 const App: React.FunctionComponent = () => {
-    // const inGame = useAppSelector(inGameSelector);
+    const inGame = useAppSelector(inGameSelector);
     
     /**
      * @test
      */
-    const inGame = true;
+    // const inGame = true;
 
     return (
         <React.Fragment>

@@ -1,4 +1,4 @@
-import { createSlice, createAction, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "@app/store";
 import { GameDTOSerializable } from "cys/models/game/game-dto";
 import Player, { PlayerSerializable } from "cys/models/game/player";
@@ -18,7 +18,7 @@ export interface GameState {
 const initialState = {
     playerCount: 2,
     playerTurn: 0,
-    playerStates: [new Player().toSerializable(), new Player().toSerializable()],
+    playerStates: [new Player("").toSerializable(), new Player("").toSerializable()],
     dice: [
         { id: 0, value: 1, rollState: "IDLE", selected: false },
         { id: 1, value: 1, rollState: "IDLE", selected: false },
@@ -40,7 +40,7 @@ const GameSlice = createSlice({
                 ...d,
                 selected: state.dice[idx].selected,
             }));
-            state = { ...action.payload, dice };
+            state = { ...gameState, dice };
         },
         // Local actions
         toggleSelectDice(state: GameState, action: PayloadAction<number>) {

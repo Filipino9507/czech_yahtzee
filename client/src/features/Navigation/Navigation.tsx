@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { makeStyles } from "@material-ui/core";
 import { AppBar, Toolbar, Typography, Button } from "@material-ui/core";
+import CasinoIcon from "@material-ui/icons/Casino";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -9,6 +10,10 @@ const useStyles = makeStyles((theme) => ({
     },
     title: {
         flexGrow: 1,
+    },
+    titleIcon: {
+        width: "5vh",
+        height: "5vh",
     },
 }));
 
@@ -21,7 +26,9 @@ const Navigation: React.FunctionComponent = () => {
         <div className={classes.root}>
             <AppBar position="static">
                 <Toolbar>
-                    <Typography className={classes.title} variant="h6">Yahtzee</Typography>
+                    <Typography className={classes.title} variant="h6">
+                        Yahtzee
+                    </Typography>
                     <Button variant="text" color="secondary" component={Link} to="/matchmaker">
                         Join Game
                     </Button>

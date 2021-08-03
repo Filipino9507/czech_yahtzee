@@ -1,10 +1,7 @@
 import { Socket } from "socket.io";
 import DataTransferAction from "cys/models/misc/data-transfer-action";
-import GameDTO from "cys/models/game/game-dto";
 import { GameTSA } from "cys/connection/to-server-actions";
-import { GameTCA } from "cys/connection/to-client-actions";
 import SocketIOActions from "./socket-io-actions";
-import SocketIOConnectionManager from "../socket-io-connection-manager";
 
 export default class GameSocketIOActions extends SocketIOActions {
     public override onAction(socket: Socket, action: DataTransferAction): boolean {

@@ -2,10 +2,11 @@ import { Socket } from "socket.io";
 import DataTransferAction from "cys/models/misc/data-transfer-action";
 import Player from "cys/models/game/player";
 import { MatchmakerTSA } from "cys/connection/to-server-actions";
-import { MatchmakerTCA } from "cys/connection/to-client-actions";
+import { GameTCA, MatchmakerTCA } from "cys/connection/to-client-actions";
 import SocketIOActions from "./socket-io-actions";
 import { generateRoomId } from "../rooms";
 import CYSocketIOError from "@models/cy-socket-io-error";
+import GameDTO from "cys/models/game/game-dto";
 
 export default class MatchmakerSocketIOActions extends SocketIOActions {
     public override onAction(socket: Socket, action: DataTransferAction): boolean {
@@ -31,16 +32,17 @@ export default class MatchmakerSocketIOActions extends SocketIOActions {
     }
 
     private onAddPlayerToNewRoom(socket: Socket, userId?: string) {
-        this.connectionManager.setPlayer(socket.id, new Player(userId));
-        const roomId = generateRoomId(this.connectionManager.rooms);
+        const roomId = generateRoomId(this.socketIOState.roomMap);
+        this.socketIOState.playerMap.set(socket.id, new Player(roomId, userId));
         socket.join(roomId);
         // player.inGame = true;
         socket.emit("action", { type: MatchmakerTCA.PROVIDE_ROOM_ID, payload: roomId });
     }
 
     private onAddPlayerToExistingRoom(socket: Socket, roomId: string, userId?: string) {
-        const room = this.connectionManager.getRoom(roomId);
-        if (!room) {
+        const room = this.socketIOState.roomMap.get(roomId);
+        const players = this.socketIOState.getPlayersByRoomId(roomId);
+        if (!room || !players) {
             throw new CYSocketIOError(
                 `No room with ID ${roomId} currently exists.`,
                 MatchmakerTCA.ERROR
@@ -52,16 +54,23 @@ export default class MatchmakerSocketIOActions extends SocketIOActions {
                 MatchmakerTCA.ERROR
             );
         }
-        this.connectionManager.setPlayer(socket.id, new Player(userId));
+        this.socketIOState.playerMap.set(socket.id, new Player(roomId, userId));
         socket.join(roomId);
-        this.connectionManager.emitToRoom(roomId, {
+
+        const game = new GameDTO(players);
+        this.socketIOState.gameMap.set(roomId, game);
+        this.socketIOState.emitToRoom(roomId, {
+            type: GameTCA.PROVIDE_GAME_STATE,
+            payload: game,
+        });
+        this.socketIOState.emitToRoom(roomId, {
             type: MatchmakerTCA.SET_IN_GAME_STATUS,
             payload: { inGame: true }
         });
     }
 
     private onRemovePlayerFromExistingRoom(socket: Socket, roomId: string) {
-        const room = this.connectionManager.getRoom(roomId);
+        const room = this.socketIOState.roomMap.get(roomId);
         if (!room) {
             throw new CYSocketIOError(
                 `No room with ID ${roomId} currently exists.`,
@@ -69,7 +78,7 @@ export default class MatchmakerSocketIOActions extends SocketIOActions {
             );
         }
         socket.leave(roomId);
-        this.connectionManager.emitToRoom(roomId, {
+        this.socketIOState.emitToRoom(roomId, {
             type: MatchmakerTCA.SET_IN_GAME_STATUS,
             payload: { inGame: false }
         });

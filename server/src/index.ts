@@ -3,8 +3,8 @@ import http from "http";
 import { Server } from "socket.io";
 import cors from "cors";
 
-import SocketIOConnectionManager from "@util/socket-io/socket-io-connection-manager";
-import { SERVER_PORT, CORS_CONFIG } from "@util/socket-io/const";
+import SocketIOConnection from "@logic/connection/socket-io-connection";
+import { SERVER_PORT, CORS_CONFIG } from "@logic/connection/const";
 import CYExpressError from "@models/cy-express-error";
 
 const app = express();
@@ -21,7 +21,7 @@ app.use((err: CYExpressError, req: any, res: Response, next: any) => {
     res.status(err.status).send(err.message);
 });
 
-const connectionManager = new SocketIOConnectionManager(io);
+const connectionManager = new SocketIOConnection(io);
 connectionManager.connect();
 // connectIOServer(io);
 

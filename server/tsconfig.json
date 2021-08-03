@@ -21,7 +21,7 @@
         "@controllers/*": ["./controllers/*"],
         "@models/*": ["./models/*"],
         "@routes/*": ["./routes/*"],
-        "@util/*": ["./util/*"]
+        "@logic/*": ["./logic/*"]
     }
   },
   "include": [

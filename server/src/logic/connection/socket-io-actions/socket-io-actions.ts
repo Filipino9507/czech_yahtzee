@@ -1,12 +1,12 @@
 import { Socket } from "socket.io";
 import DataTransferAction from "cys/models/misc/data-transfer-action";
-import SocketIOConnectionManager from "../socket-io-connection-manager";
+import SocketIOState from "../socket-io-state";
 
 export default abstract class SocketIOActions {
-    protected connectionManager: SocketIOConnectionManager;
+    protected socketIOState: SocketIOState;
 
-    public constructor(connectionManager: SocketIOConnectionManager) {
-        this.connectionManager = connectionManager;
+    public constructor(socketIOState: SocketIOState) {
+        this.socketIOState = socketIOState;
     }
 
     /**

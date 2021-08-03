@@ -4,7 +4,7 @@ import io from "socket.io-client";
 import GameReducer from "@features/game/GameReducer";
 import MatchmakerReducer from "@features/matchmaker/MatchmakerReducer";
 
-const socket = io("http://localhost:80");
+const socket = io("http://localhost:3000");
 const socketIoMiddleware = createSocketIoMiddleware(socket, "server/");
 
 // @ts-ignore
@@ -22,7 +22,6 @@ export const store = configureStore({
         game: GameReducer,
         matchmaker: MatchmakerReducer,
     },
-    // middleware: [socketIoMiddleware, loggerMiddleware],
     middleware: (getDefaultMiddleware) => getDefaultMiddleware()
         .concat([socketIoMiddleware, loggerMiddleware])
 });
