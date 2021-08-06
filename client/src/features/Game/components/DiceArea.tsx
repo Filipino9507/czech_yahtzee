@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Divider, Card, Grid, makeStyles } from "@material-ui/core";
+import { Box, Divider, Grid, makeStyles } from "@material-ui/core";
 import { useAppSelector } from "@app/hooks";
 
 import Dice from "./Dice";
@@ -16,9 +16,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const DiceArea: React.FunctionComponent = () => {
-    const idleDice = useAppSelector(diceSelector("IDLE"));
-    const rolledDice = useAppSelector(diceSelector("ROLLED"));
-    const lockedInDice = useAppSelector(diceSelector("LOCKED_IN"));
+    const idleDice = useAppSelector(diceSelector({ rollState: "IDLE" }));
+    const rolledDice = useAppSelector(diceSelector({ rollState: "ROLLED" }));
+    const lockedInDice = useAppSelector(diceSelector({ rollState: "LOCKED_IN" }));
     const classes = useStyles();
     return (
         <Box className={classes.diceArea} border={3} borderColor="primary.main">

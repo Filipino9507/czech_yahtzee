@@ -1,24 +1,17 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "@app/store";
-import { GameDTOSerializable } from "cys/models/game/game-dto";
-import Player, { PlayerSerializable } from "cys/models/game/player";
-import Dice from "cys/models/game/dice";
-import DiceRollState from "cys/models/game/dice-roll-state";
+import Game from "cys/models/game/game";
+import { getDefaultPlayer } from "cys/models/game/player";
+import { DiceRollState } from "cys/models/game/dice";
+import { GameTSA } from "cys/connection/to-server-actions";
 
-export type DiceState = Dice & { selected: boolean };
 
-export interface GameState {
-    playerCount: number;
-    playerTurn: number;
-    playerStates: PlayerSerializable[];
-    diceCount: number;
-    dice: DiceState[];
-}
+export type GameState = Game;
 
-const initialState = {
+const initialState: GameState = {
     playerCount: 2,
     playerTurn: 0,
-    playerStates: [new Player("").toSerializable(), new Player("").toSerializable()],
+    players: [getDefaultPlayer(), getDefaultPlayer()],
     dice: [
         { id: 0, value: 1, rollState: "IDLE", selected: false },
         { id: 1, value: 1, rollState: "IDLE", selected: false },
@@ -27,37 +20,52 @@ const initialState = {
         { id: 4, value: 1, rollState: "IDLE", selected: false },
         { id: 5, value: 1, rollState: "IDLE", selected: false },
     ],
-} as GameState;
+    diceCount: 6,
+    roomId: "",
+};
+
+export const getSelectedDice = (state: GameState) => state.dice.filter((d) => d.selected);
+
+export const diceSelector =
+    (options: { rollState?: DiceRollState; selected?: boolean }) => (state: RootState) => {
+        const { rollState, selected } = options;
+        let dice = rollState
+            ? state.game.dice.filter((d) => d.rollState === rollState)
+            : state.game.dice;
+        return selected ? dice.filter((d) => d.selected === selected) : dice;
+    };
+export const roomIdSelector = (state: RootState) => state.game.roomId;
+
+export const rollDice = createAction<{
+    roomId: string;
+}>(GameTSA.ROLL_DICE);
+export const toggleSelectDice = createAction<{
+    roomId: string;
+    diceId: number;
+}>(GameTSA.TOGGLE_SELECT_DICE);
+export const lockInDice = createAction<{
+    roomId: string;
+    lockedIn: boolean;
+}>(GameTSA.LOCK_IN_DICE);
+export const finishTurn = createAction<{
+    roomId: string;
+}>(GameTSA.FINISH_TURN);
 
 const GameSlice = createSlice({
     name: "game",
     initialState,
     reducers: {
         // To-client socket.io actions
-        provideGameState(state: GameState, action: PayloadAction<GameDTOSerializable>) {
-            const gameState = action.payload;
-            const dice = gameState.dice.map((d, idx) => ({
-                ...d,
-                selected: state.dice[idx].selected,
-            }));
-            state = { ...gameState, dice };
+        provideGameState(_: GameState, action: PayloadAction<Game>) {
+            return { ...action.payload };
         },
-        // Local actions
-        toggleSelectDice(state: GameState, action: PayloadAction<number>) {
-            const dice = state.dice.find((d) => d.id === action.payload);
-            if (dice) dice.selected = !dice.selected;
+        unselectAllDice(state: GameState) {
+            for (const dice of state.dice) {
+                dice.selected = false;
+            }
         },
     },
     extraReducers: {},
 });
-
-export const getSelectedDice = (state: GameState) => state.dice.filter((d) => d.selected);
-
-export const diceSelector = (rollState?: DiceRollState) => (state: RootState) => {
-    if (!rollState) return state.game.dice;
-    return state.game.dice.filter((d) => d.rollState === rollState);
-};
-
-export const { toggleSelectDice } = GameSlice.actions;
 
 export default GameSlice.reducer;

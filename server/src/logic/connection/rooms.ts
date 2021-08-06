@@ -1,8 +1,10 @@
+import SocketIOState from "./socket-io-state";
+
 const GAME_ID_CHARACTER_SET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const GAME_ID_CHARACTER_SET_SIZE = GAME_ID_CHARACTER_SET.length;
 const GAME_ID_LENGTH = 4;
 
-export const generateRoomId = (roomMap: Map<string, Room>) => {
+export const generateRoomId = (ioState: SocketIOState) => {
     let roomId;
     do {
         roomId = "";
@@ -11,7 +13,7 @@ export const generateRoomId = (roomMap: Map<string, Room>) => {
                 Math.floor(Math.random() * GAME_ID_CHARACTER_SET_SIZE)
             );
         }
-    } while (roomMap.has(roomId));
+    } while (ioState.hasRoom(roomId));
     return roomId;
 };
 

@@ -4,8 +4,8 @@ import { Server } from "socket.io";
 import cors from "cors";
 
 import SocketIOConnection from "@logic/connection/socket-io-connection";
-import { SERVER_PORT, CORS_CONFIG } from "@logic/connection/const";
-import CYExpressError from "@models/cy-express-error";
+import { SERVER_PORT, CORS_CONFIG } from "@logic/const";
+import CYExpressError from "@models/error/cy-express-error";
 
 const app = express();
 const server = http.createServer(app);
@@ -21,8 +21,8 @@ app.use((err: CYExpressError, req: any, res: Response, next: any) => {
     res.status(err.status).send(err.message);
 });
 
-const connectionManager = new SocketIOConnection(io);
-connectionManager.connect();
+const ioConnection = new SocketIOConnection(io);
+ioConnection.connect();
 // connectIOServer(io);
 
 server.listen(SERVER_PORT, () => {

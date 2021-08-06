@@ -14,5 +14,6 @@
                 }
             ]
         }
-    ]
+    ],
+    "editor.minimap.enabled": false
 }

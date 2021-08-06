@@ -3,10 +3,10 @@ import DataTransferAction from "cys/models/misc/data-transfer-action";
 import SocketIOState from "../socket-io-state";
 
 export default abstract class SocketIOActions {
-    protected socketIOState: SocketIOState;
+    protected ioState: SocketIOState;
 
-    public constructor(socketIOState: SocketIOState) {
-        this.socketIOState = socketIOState;
+    public constructor(ioState: SocketIOState) {
+        this.ioState = ioState;
     }
 
     /**

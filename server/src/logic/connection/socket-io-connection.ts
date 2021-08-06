@@ -1,36 +1,36 @@
 import { Server, Socket } from "socket.io";
-import Player from "cys/models/game/player";
-import { Room } from "./rooms";
-import CYSocketIOError from "@models/cy-socket-io-error";
-import { MatchmakerTCA, MiscTCA } from "cys/connection/to-client-actions";
+import CYSocketIOError from "@models/error/cy-socket-io-error";
+import { MiscTCA } from "cys/connection/to-client-actions";
 import DataTransferAction from "cys/models/misc/data-transfer-action";
 
 import SocketIOActions from "./socket-io-actions/socket-io-actions";
 import MatchmakerSocketIOActions from "./socket-io-actions/matchmaker-socket-io-actions";
 import GameSocketIOActions from "./socket-io-actions/game-socket-io-actions";
 import SocketIOState from "./socket-io-state";
+import CYSocketIOMiscError from "@models/error/cy-socket-io-misc-error";
 
 export default class SocketIOConnection {
     private io: Server;
-    private socketIOState: SocketIOState;
-    private socketIOActionsList: SocketIOActions[];
+    private ioState: SocketIOState;
+    private ioActionsList: SocketIOActions[];
 
     public constructor(io: Server) {
         this.io = io;
-        this.socketIOState = new SocketIOState(this.io.sockets.adapter.rooms);
-        this.socketIOActionsList = [
-            new MatchmakerSocketIOActions(this.socketIOState),
-            new GameSocketIOActions(this.socketIOState),
+        this.ioState = new SocketIOState(this.io.sockets.adapter.rooms);
+        this.ioActionsList = [
+            new MatchmakerSocketIOActions(this.ioState),
+            new GameSocketIOActions(this.ioState),
         ];
     }
 
     private onAction(socket: Socket, action: DataTransferAction): void {
-        for (const socketIOActions of this.socketIOActionsList) {
-            if (socketIOActions.onAction(socket, action)) {
-                break;
+        for (const socketIOActions of this.ioActionsList) {
+            const matched = socketIOActions.onAction(socket, action);
+            if (matched) {
+                return;
             }
         }
-        throw new CYSocketIOError(`Socket action ${action.type} not implemented.`, MiscTCA.ERROR);
+        throw new CYSocketIOMiscError(`Socket action ${action.type} not implemented.`);
     }
 
     private onError(socket: Socket, error: Error): void {
@@ -48,8 +48,8 @@ export default class SocketIOConnection {
 
     public connect() {
         this.io.on("connection", (socket) => {
-            this.socketIOState.connect(socket);
-            socket.on("disconnect", () => this.socketIOState.disconnect(socket));
+            this.ioState.connect(socket);
+            socket.on("disconnect", () => this.ioState.disconnect(socket));
 
             socket.on("action", (action: DataTransferAction) => {
                 try {
@@ -57,7 +57,6 @@ export default class SocketIOConnection {
                 } catch (error) {
                     this.onError(socket, error);
                 }
-                console.log(this.socketIOState.roomMap);
             });
         });
     }

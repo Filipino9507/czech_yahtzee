@@ -1,4 +1,4 @@
-export default class CYSocketIOError extends Error {
+export default abstract class CYSocketIOError extends Error {
     public override message: string;
     public actionType: string;
 
@@ -10,7 +10,5 @@ export default class CYSocketIOError extends Error {
         Object.setPrototypeOf(this, CYSocketIOError.prototype);
     }
 
-    public override toString(): string {
-        return `CYSocketIoError: [ACTION_TYPE ${this.actionType}] ${this.message}`;
-    }
+    public abstract override toString(): string;
 }

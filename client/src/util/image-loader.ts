@@ -1,5 +1,4 @@
-import DiceValue from "cys/models/game/dice-value";
-
+import { DiceValue } from "cys/models/game/dice";
 
 // @ts-ignore
 import dice1 from "../images/dice-1.png";

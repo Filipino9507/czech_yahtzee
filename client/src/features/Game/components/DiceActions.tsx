@@ -2,7 +2,12 @@ import React from "react";
 import { makeStyles } from "@material-ui/core";
 import { Box, Typography, Button } from "@material-ui/core";
 import CasinoIcon from "@material-ui/icons/Casino";
+import LockIcon from "@material-ui/icons/Lock";
+import LockOpenIcon from "@material-ui/icons/LockOpen";
 import DoneSharpIcon from "@material-ui/icons/DoneSharp";
+
+import { useAppDispatch, useAppSelector } from "@app/hooks";
+import { rollDice, lockInDice, finishTurn, roomIdSelector, diceSelector } from "../GameReducer";
 
 const useStyles = makeStyles((theme) => ({
     actionButton: {
@@ -20,6 +25,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const DiceActions: React.FunctionComponent = () => {
+    const roomId = useAppSelector(roomIdSelector);
+
+    const dispatch = useAppDispatch();
+    const onRollDice = () => dispatch(rollDice({ roomId }));
+    const onLockInDice = (lockedIn: boolean) => dispatch(lockInDice({ roomId, lockedIn }));
+    const onFinishTurn = () => dispatch(finishTurn({ roomId }));
+
     const classes = useStyles();
     return (
         <Box>
@@ -34,7 +46,7 @@ const DiceActions: React.FunctionComponent = () => {
                     className={classes.actionButton}
                     variant="contained"
                     color="primary"
-                    onClick={() => {}}
+                    onClick={onRollDice}
                 >
                     <CasinoIcon className={classes.actionButtonIcon} />
                 </Button>
@@ -42,6 +54,23 @@ const DiceActions: React.FunctionComponent = () => {
                     className={classes.actionButton}
                     variant="contained"
                     color="primary"
+                    onClick={() => onLockInDice(true)}
+                >
+                    <LockIcon className={classes.actionButtonIcon} />
+                </Button>
+                <Button
+                    className={classes.actionButton}
+                    variant="contained"
+                    color="primary"
+                    onClick={() => onLockInDice(false)}
+                >
+                    <LockOpenIcon className={classes.actionButtonIcon} />
+                </Button>
+                <Button
+                    className={classes.actionButton}
+                    variant="contained"
+                    color="secondary"
+                    onClick={onFinishTurn}
                 >
                     <DoneSharpIcon className={classes.actionButtonIcon} />
                 </Button>

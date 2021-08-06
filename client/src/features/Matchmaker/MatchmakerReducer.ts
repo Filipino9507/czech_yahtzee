@@ -8,11 +8,11 @@ export interface MatchmakerState {
     errorMessage: string;
 }
 
-const initialState = {
+const initialState: MatchmakerState = {
     inGame: false,
     roomId: null,
     errorMessage: "",
-} as MatchmakerState;
+};
 
 export const roomIdSelector = (state: RootState) => state.matchmaker.roomId;
 export const inGameSelector = (state: RootState) => state.matchmaker.inGame;
@@ -50,7 +50,5 @@ const MatchmakerSlice = createSlice({
     },
     extraReducers: {},
 });
-
-export const { provideRoomId } = MatchmakerSlice.actions;
 
 export default MatchmakerSlice.reducer;
