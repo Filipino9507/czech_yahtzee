@@ -3,12 +3,19 @@ import DataTransferAction from "cys/models/misc/data-transfer-action";
 import { MatchmakerTSA } from "cys/connection/to-server-actions";
 import { GameTCA, MatchmakerTCA } from "cys/connection/to-client-actions";
 import SocketIOActions from "./socket-io-actions";
-import { generateRoomId } from "../rooms";
+import { generateRoomId } from "../id";
 import GameInstance from "@logic/game/game-instance";
 
 export default class MatchmakerSocketIOActions extends SocketIOActions {
     public override onAction(socket: Socket, action: DataTransferAction): boolean {
         switch (action.type) {
+            /**
+             * 
+             * !!!!!!
+             * New action:
+             * RETRIEVE STATE BY ROOM ID AND PLAYER ID
+             * Happens when player refreshes page, using the stored roomId and playerId
+             */
             case MatchmakerTSA.ADD_PLAYER_TO_NEW_ROOM: {
                 const { userId } = action.payload;
                 this.onAddPlayerToNewRoom(socket, userId);

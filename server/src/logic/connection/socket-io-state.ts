@@ -3,6 +3,7 @@ import DataTransferAction from "cys/models/misc/data-transfer-action";
 import CYSocketIOMatchmakerError from "@models/error/cy-socket-io-mathcmaker-error";
 import { Room } from "./rooms";
 import GameInstance from "@logic/game/game-instance";
+import { logInfo } from "@util/logger";
 
 export default class SocketIOState {
     private sockets: Socket[];
@@ -34,10 +35,12 @@ export default class SocketIOState {
     }
 
     public connect(socket: Socket): void {
+        logInfo("CONNECT", `New client with socket id ${socket.id} has connected.`);
         this.sockets.push(socket);
     }
 
     public disconnect(socket: Socket): void {
+        logInfo("DISCONNECT", `Client with socket id ${socket.id} has disconnected.`);
         this.sockets.splice(this.sockets.indexOf(socket), 1);
     }
 

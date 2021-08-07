@@ -6,6 +6,7 @@ import cors from "cors";
 import SocketIOConnection from "@logic/connection/socket-io-connection";
 import { SERVER_PORT, CORS_CONFIG } from "@logic/const";
 import CYExpressError from "@models/error/cy-express-error";
+import { logInfo } from "@util/logger";
 
 const app = express();
 const server = http.createServer(app);
@@ -14,7 +15,7 @@ const io = new Server(server, { cors: CORS_CONFIG });
 app.use(cors(CORS_CONFIG));
 
 app.get("/", (req, res) => {
-    res.status(200).send("Server works...");
+    res.status(200).send("Shhh... this is the server for Czech Yahtzee");
 });
 
 app.use((err: CYExpressError, req: any, res: Response, next: any) => {
@@ -26,5 +27,5 @@ ioConnection.connect();
 // connectIOServer(io);
 
 server.listen(SERVER_PORT, () => {
-    console.log(`[RUNNING] Server is listening on port ${SERVER_PORT}...`);
+    logInfo("RUNNING", `Server is listening on port ${SERVER_PORT}...`);
 });

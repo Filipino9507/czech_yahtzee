@@ -13,7 +13,7 @@ export type GameState = Game;
 const initialState: GameState = {
     playerCount: 2,
     playerTurn: 0,
-    players: [getDefaultPlayer("GUEST1"), getDefaultPlayer("GUEST2")],
+    players: [getDefaultPlayer("GUEST1", ""), getDefaultPlayer("GUEST2", "")],
     dice: [
         { id: 0, value: 1, rollState: "IDLE", selected: false },
         { id: 1, value: 1, rollState: "IDLE", selected: false },

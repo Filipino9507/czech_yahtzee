@@ -2,8 +2,10 @@ import { Socket } from "socket.io";
 import Game, { getDefaultGame } from "cys/models/game/game";
 import { DiceValue } from "cys/models/game/dice";
 import Player, { getDefaultPlayer } from "cys/models/game/player";
+import { generatePlayerId } from "@logic/connection/id";
 
 export default class GameInstance {
+    // socketId -> Player
     private playerMap: Map<string, Player>;
 
     public game: Game;
@@ -22,13 +24,16 @@ export default class GameInstance {
     /**
      *
      * @param socket socket of the player to add
+     * @param playerId if the player reloaded the page, this allows 
+     * the server to identify them
      * @param userId potential userId if the player is not a guest
      * @returns index of the player for determining order
      */
     public addPlayer(socket: Socket, userId?: string): number {
         socket.join(this.game.roomId);
-        const displayedName = userId === undefined ? `Guest_${socket.id}` : `User_${userId}`;
-        const player = getDefaultPlayer(displayedName, userId);
+        const playerId = generatePlayerId(this.playerMap);
+        const displayedName = userId === undefined ? `Guest_${playerId}` : `User_${userId}`;
+        const player = getDefaultPlayer(displayedName, playerId, userId);
         this.playerMap.set(socket.id, player);
         this.game.players.push(player);
         return this.game.players.length - 1;
