@@ -2,15 +2,15 @@ import { ScoreboardData, getDefaultScorebordData } from "./score";
 
 export default interface Player {
     rolls: number;
-    extraRolls: number;
     scoreboardData: ScoreboardData;
+    displayedName: string;
     userId?: string;
 }
 
-export const getDefaultPlayer = (userId?: string): Player => ({
+export const getDefaultPlayer = (displayedName: string, userId?: string): Player => ({
     rolls: 0,
-    extraRolls: 0,
     scoreboardData: getDefaultScorebordData(),
+    displayedName,
     userId,
 });
 

@@ -10,17 +10,28 @@ export default class GameInstance {
     public get hasStarted(): boolean {
         return this.game.playerCount === this.game.players.length;
     }
+    public get playerCount(): number {
+        return this.game.players.length;
+    }
 
     public constructor(roomId: string) {
         this.game = getDefaultGame(roomId);
         this.playerMap = new Map();
     }
 
-    public addPlayer(socket: Socket, userId?: string): void {
+    /**
+     *
+     * @param socket socket of the player to add
+     * @param userId potential userId if the player is not a guest
+     * @returns index of the player for determining order
+     */
+    public addPlayer(socket: Socket, userId?: string): number {
         socket.join(this.game.roomId);
-        const player = getDefaultPlayer(userId);
+        const displayedName = userId === undefined ? `Guest_${socket.id}` : `User_${userId}`;
+        const player = getDefaultPlayer(displayedName, userId);
         this.playerMap.set(socket.id, player);
         this.game.players.push(player);
+        return this.game.players.length - 1;
     }
 
     public removePlayer(socket: Socket): void {
@@ -42,7 +53,7 @@ export default class GameInstance {
         }
     }
 
-    public toggleSelectDice(diceId: number, selected?: boolean): void {
+    public toggleSelectDice(diceId: number): void {
         this.game.dice[diceId].selected = !this.game.dice[diceId].selected;
     }
 
@@ -54,21 +65,20 @@ export default class GameInstance {
         }
     }
 
-    public switchTurn(): void {
-        this.game.playerTurn = (this.game.playerTurn + 1) % this.game.playerCount;
-    }
-
-    public score(): void {
-        /**
-         * Score
-         */
-    }
-
-    public resetDice(): void {
+    public endTurn(): void {
+        this.score();
         for (const dice of this.game.dice) {
             dice.rollState = "IDLE";
             dice.value = 1;
             dice.selected = false;
         }
+        this.game.playerTurn = (this.game.playerTurn + 1) % this.game.playerCount;
+        this.game.players[this.game.playerTurn].rolls += 3;
+    }
+
+    private score(): void {
+        /**
+         * Score
+         */
     }
 }

@@ -7,7 +7,15 @@ import LockOpenIcon from "@material-ui/icons/LockOpen";
 import DoneSharpIcon from "@material-ui/icons/DoneSharp";
 
 import { useAppDispatch, useAppSelector } from "@app/hooks";
-import { rollDice, lockInDice, finishTurn, roomIdSelector, diceSelector } from "../GameReducer";
+import {
+    rollDice,
+    lockInDice,
+    finishTurn,
+    roomIdSelector,
+    canPlaySelector,
+    currentPlayerSelector,
+} from "../GameReducer";
+import { playerIdxSelector } from "@features/matchmaker/MatchmakerReducer";
 
 const useStyles = makeStyles((theme) => ({
     actionButton: {
@@ -26,6 +34,9 @@ const useStyles = makeStyles((theme) => ({
 
 const DiceActions: React.FunctionComponent = () => {
     const roomId = useAppSelector(roomIdSelector);
+    const playerIdx = useAppSelector(playerIdxSelector);
+    const canPlay = useAppSelector(canPlaySelector(playerIdx));
+    const currentPlayer = useAppSelector(currentPlayerSelector);
 
     const dispatch = useAppDispatch();
     const onRollDice = () => dispatch(rollDice({ roomId }));
@@ -36,7 +47,7 @@ const DiceActions: React.FunctionComponent = () => {
     return (
         <Box>
             <Typography className={classes.actionText} variant="h6">
-                [PLAYER_NAME]'s Turn
+                {currentPlayer.displayedName}'s Turn
             </Typography>
             <Typography className={classes.actionText} variant="h6">
                 Rolls: 3
@@ -46,6 +57,7 @@ const DiceActions: React.FunctionComponent = () => {
                     className={classes.actionButton}
                     variant="contained"
                     color="primary"
+                    disabled={!canPlay}
                     onClick={onRollDice}
                 >
                     <CasinoIcon className={classes.actionButtonIcon} />
@@ -54,6 +66,7 @@ const DiceActions: React.FunctionComponent = () => {
                     className={classes.actionButton}
                     variant="contained"
                     color="primary"
+                    disabled={!canPlay}
                     onClick={() => onLockInDice(true)}
                 >
                     <LockIcon className={classes.actionButtonIcon} />
@@ -62,6 +75,7 @@ const DiceActions: React.FunctionComponent = () => {
                     className={classes.actionButton}
                     variant="contained"
                     color="primary"
+                    disabled={!canPlay}
                     onClick={() => onLockInDice(false)}
                 >
                     <LockOpenIcon className={classes.actionButtonIcon} />
@@ -70,6 +84,7 @@ const DiceActions: React.FunctionComponent = () => {
                     className={classes.actionButton}
                     variant="contained"
                     color="secondary"
+                    disabled={!canPlay}
                     onClick={onFinishTurn}
                 >
                     <DoneSharpIcon className={classes.actionButtonIcon} />

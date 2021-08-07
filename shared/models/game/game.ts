@@ -12,23 +12,18 @@ export default interface Game {
 
 export const getDefaultGame = (
     roomId: string,
-    config: GameConfig = { diceCount: 6, playerCount: 2 },
+    playerCount = 2,
 ): Game => {
-    const dice = new Array<Dice>(config.diceCount);
-    for (let i = 0; i < config.diceCount; ++i) {
+    const dice = new Array<Dice>(6);
+    for (let i = 0; i < dice.length; ++i) {
         dice[i] = getDefaultDice(i);
     }
     return {
-        playerCount: config.playerCount,
+        playerCount,
         playerTurn: 0,
         players: [],
-        diceCount: config.diceCount,
+        diceCount: dice.length,
         dice,
         roomId: roomId ?? "",
     };
 };
-
-export interface GameConfig {
-    playerCount: number;
-    diceCount: number;
-}

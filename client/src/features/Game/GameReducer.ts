@@ -5,13 +5,15 @@ import { getDefaultPlayer } from "cys/models/game/player";
 import { DiceRollState } from "cys/models/game/dice";
 import { GameTSA } from "cys/connection/to-server-actions";
 
-
+/**
+ * State
+ */
 export type GameState = Game;
 
 const initialState: GameState = {
     playerCount: 2,
     playerTurn: 0,
-    players: [getDefaultPlayer(), getDefaultPlayer()],
+    players: [getDefaultPlayer("GUEST1"), getDefaultPlayer("GUEST2")],
     dice: [
         { id: 0, value: 1, rollState: "IDLE", selected: false },
         { id: 1, value: 1, rollState: "IDLE", selected: false },
@@ -24,8 +26,9 @@ const initialState: GameState = {
     roomId: "",
 };
 
-export const getSelectedDice = (state: GameState) => state.dice.filter((d) => d.selected);
-
+/**
+ * Selectors
+ */
 export const diceSelector =
     (options: { rollState?: DiceRollState; selected?: boolean }) => (state: RootState) => {
         const { rollState, selected } = options;
@@ -36,6 +39,17 @@ export const diceSelector =
     };
 export const roomIdSelector = (state: RootState) => state.game.roomId;
 
+export const canPlaySelector = (playerIdx: number) => (state: RootState) =>
+    state.game.playerTurn === playerIdx;
+export const playerSelector = (playerIdx: number) => (state: RootState) =>
+    state.game.players[playerIdx];
+export const currentPlayerSelector = (state: RootState) =>
+    state.game.players[state.game.playerTurn];
+export const playersSelector = (state: RootState) => state.game.players;
+
+/**
+ * Actions
+ */
 export const rollDice = createAction<{
     roomId: string;
 }>(GameTSA.ROLL_DICE);
@@ -51,6 +65,9 @@ export const finishTurn = createAction<{
     roomId: string;
 }>(GameTSA.FINISH_TURN);
 
+/**
+ * Slice
+ */
 const GameSlice = createSlice({
     name: "game",
     initialState,

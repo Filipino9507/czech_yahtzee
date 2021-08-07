@@ -32,20 +32,25 @@ export default class MatchmakerSocketIOActions extends SocketIOActions {
     private onAddPlayerToNewRoom(socket: Socket, userId?: string) {
         const roomId = generateRoomId(this.ioState);
         const gameInstance = new GameInstance(roomId);
-        gameInstance.addPlayer(socket, userId);
+        const playerIdx = gameInstance.addPlayer(socket, userId);
         this.ioState.setGame(roomId, gameInstance);
-        socket.emit("action", { type: MatchmakerTCA.PROVIDE_ROOM_ID, payload: roomId });
+        socket.emit("action", {
+            type: MatchmakerTCA.PROVIDE_ROOM_META,
+            payload: { roomId, playerIdx },
+        });
     }
 
     private onAddPlayerToExistingRoom(socket: Socket, roomId: string, userId?: string) {
         const gameInstance = this.ioState.getGame(roomId);
-        gameInstance.addPlayer(socket, userId);
-        
+        const playerIdx = gameInstance.addPlayer(socket, userId);
+        socket.emit("action", {
+            type: MatchmakerTCA.PROVIDE_ROOM_META,
+            payload: { roomId, playerIdx },
+        });
         this.ioState.emitToRoom(roomId, {
             type: MatchmakerTCA.SET_IN_GAME_STATUS,
-            payload: { inGame: true },
+            payload: true,
         });
-
         this.ioState.emitToRoom(roomId, {
             type: GameTCA.PROVIDE_GAME_STATE,
             payload: gameInstance.game,

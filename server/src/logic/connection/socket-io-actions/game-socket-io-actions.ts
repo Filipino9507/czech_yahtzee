@@ -61,9 +61,7 @@ export default class GameSocketIOActions extends SocketIOActions {
 
     private onFinishTurn(roomId: string) {
         const gameInstance = this.ioState.getGame(roomId);
-        gameInstance.score();
-        gameInstance.resetDice();
-        gameInstance.switchTurn();
+        gameInstance.endTurn();
         this.ioState.emitToRoom(roomId, {
             type: GameTCA.PROVIDE_GAME_STATE,
             payload: gameInstance.game,
