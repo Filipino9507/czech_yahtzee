@@ -1,6 +1,6 @@
 export interface Score {
     value: number;
-    passed: boolean;
+    scored: boolean;
 }
 
 export interface ScoreboardData {
@@ -21,9 +21,10 @@ export interface ScoreboardData {
     run: Score;
     poker: Score;
     general: Score;
+    totalScore: number;
 }
 
-export const getDefaultScore = (): Score => ({ value: 0, passed: false });
+export const getDefaultScore = (): Score => ({ value: 0, scored: false });
 export const getDefaultScorebordData = (): ScoreboardData => {
     return {
         ones: getDefaultScore(),
@@ -42,7 +43,8 @@ export const getDefaultScorebordData = (): ScoreboardData => {
         largeTriangle: getDefaultScore(),
         run: getDefaultScore(),
         poker: getDefaultScore(),
-        general: getDefaultScore()
+        general: getDefaultScore(),
+        totalScore: 0,
     }
 };
 

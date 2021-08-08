@@ -74,6 +74,7 @@ export default class GameInstance {
                 dice.rollState = "ROLLED";
             }
         }
+        this.generateScores();
     }
 
     public toggleSelectDice(diceId: number): void {
@@ -97,6 +98,10 @@ export default class GameInstance {
         }
         this.game.playerTurn = (this.game.playerTurn + 1) % this.game.playerCount;
         this.game.players[this.game.playerTurn].rolls += 3;
+    }
+
+    private generateScores(): void {
+
     }
 
     private score(): void {
