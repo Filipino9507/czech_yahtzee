@@ -29,6 +29,10 @@ export const inGameSelector = (state: RootState) => state.matchmaker.inGame;
 /**
  * Actions
  */
+export const requestStoredGame = createAction<{
+    roomId: string;
+    playerId: string;
+}>(MatchmakerTSA.REQUEST_STORED_GAME);
 export const addPlayerToNewRoom = createAction<{
     userId?: string;
 }>(MatchmakerTSA.ADD_PLAYER_TO_NEW_ROOM);

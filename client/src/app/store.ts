@@ -17,27 +17,27 @@ const loggerMiddleware = (store) => (next) => (action) => {
     return result;
 };
 
-// const getPreloadedState = () => {
-//     const appState = sessionStorage.getItem("appState");
-//     if (appState) {
-//         return JSON.parse(appState);
-//     }
-//     return {};
-// };
+const getPreloadedState = () => {
+    const appState = sessionStorage.getItem("appState");
+    if (appState) {
+        return JSON.parse(appState);
+    }
+    return {};
+};
 
 export const store = configureStore({
     reducer: {
         game: GameReducer,
         matchmaker: MatchmakerReducer,
     },
-    // preloadedState: getPreloadedState(),
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware()
-        .concat([socketIoMiddleware, loggerMiddleware])
+    preloadedState: getPreloadedState(),
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware().concat([socketIoMiddleware, loggerMiddleware]),
 });
 
-// store.subscribe(() => {
-//     sessionStorage.setItem("appState", JSON.stringify(store.getState()));
-// });
+store.subscribe(() => {
+    sessionStorage.setItem("appState", JSON.stringify(store.getState()));
+});
 
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof store.getState>;

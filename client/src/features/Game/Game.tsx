@@ -1,9 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { makeStyles } from "@material-ui/core";
 import { Card, Box } from "@material-ui/core";
 import DiceArea from "./components/DiceArea";
 import DiceActions from "./components/DiceActions";
 import Scoreboard from "./components/Scoreboard";
+
+import { useAppDispatch, useAppSelector } from "@app/hooks";
+import { playerIdxSelector, requestStoredGame } from "@features/matchmaker/MatchmakerReducer";
+import { roomIdSelector, playerSelector } from "./GameReducer";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -16,6 +20,17 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Game: React.FunctionComponent = () => {
+    const storedPlayerIdx = useAppSelector(playerIdxSelector);
+    const storedPlayer = useAppSelector(playerSelector(storedPlayerIdx));
+    const storedRoomId = useAppSelector(roomIdSelector);
+    const dispatch = useAppDispatch();
+    useEffect(() => {
+        dispatch(requestStoredGame({
+            roomId: storedRoomId,
+            playerId: storedPlayer.playerId,
+        }))
+    }, []);
+
     const classes = useStyles();
     return (
         <Card className={classes.root}>

@@ -15,10 +15,28 @@ export default class GameInstance {
     public get playerCount(): number {
         return this.game.players.length;
     }
-
+    
     public constructor(roomId: string) {
         this.game = getDefaultGame(roomId);
         this.playerMap = new Map();
+    }
+
+    /**
+     * Tries to reinclude player after page reload on client-side
+     * @param playerId id of the player
+     * @returns whether this game contains the player
+     */
+    public reincludePlayer(socket: Socket, playerId: string): boolean {
+        for (const socketId of Array.from(this.playerMap.keys())) {
+            const player = this.playerMap.get(socketId);
+            if (player && player.playerId === playerId) {
+                socket.join(this.game.roomId);
+                this.playerMap.set(socket.id, player);
+                this.playerMap.delete(socketId);
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

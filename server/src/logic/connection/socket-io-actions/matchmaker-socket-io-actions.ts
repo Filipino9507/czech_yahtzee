@@ -5,17 +5,16 @@ import { GameTCA, MatchmakerTCA } from "cys/connection/to-client-actions";
 import SocketIOActions from "./socket-io-actions";
 import { generateRoomId } from "../id";
 import GameInstance from "@logic/game/game-instance";
+import { logError, logInfo } from "@util/logger";
 
 export default class MatchmakerSocketIOActions extends SocketIOActions {
     public override onAction(socket: Socket, action: DataTransferAction): boolean {
         switch (action.type) {
-            /**
-             * 
-             * !!!!!!
-             * New action:
-             * RETRIEVE STATE BY ROOM ID AND PLAYER ID
-             * Happens when player refreshes page, using the stored roomId and playerId
-             */
+            case MatchmakerTSA.REQUEST_STORED_GAME: {
+                const { roomId, playerId } = action.payload;
+                this.onRequestStoredGame(socket, roomId, playerId);
+                return true;
+            }
             case MatchmakerTSA.ADD_PLAYER_TO_NEW_ROOM: {
                 const { userId } = action.payload;
                 this.onAddPlayerToNewRoom(socket, userId);
@@ -33,6 +32,31 @@ export default class MatchmakerSocketIOActions extends SocketIOActions {
             }
             default:
                 return false;
+        }
+    }
+
+    private onRequestStoredGame(socket: Socket, roomId: string, playerId: string) {
+        try {
+            const gameInstance = this.ioState.getGame(roomId);
+            const hasPlayer = gameInstance.reincludePlayer(socket, playerId);
+            if (hasPlayer) {
+                logInfo("GAME_RETRIEVED", "Successfully retrieved game.");
+                socket.emit("action", {
+                    type: MatchmakerTCA.SET_IN_GAME_STATUS,
+                    payload: true,
+                });
+                socket.emit("action", {
+                    type: GameTCA.PROVIDE_GAME_STATE,
+                    payload: gameInstance.game,
+                });
+            } else {
+                throw "";
+            }
+        } catch (error) {
+            logError(
+                "CANNOT_RETRIEVE_GAME",
+                `Could not retrieve stored game. Player ${playerId} in room ${roomId} does not exist.`
+            );
         }
     }
 

@@ -18,7 +18,7 @@ export const generateRoomId = (ioState: SocketIOState) => {
     return roomId;
 };
 
-const PLAYER_ID_CHARACTER_SET = "abcdefghijklmnopqrstuvwxyz01234567890";
+const PLAYER_ID_CHARACTER_SET = "0123456789";
 const PLAYER_ID_CHARACTER_SET_SIZE = PLAYER_ID_CHARACTER_SET.length;
 const PLAYER_ID_LENGTH = 8;
 
