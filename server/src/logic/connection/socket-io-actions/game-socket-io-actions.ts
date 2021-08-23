@@ -2,6 +2,7 @@ import { Socket } from "socket.io";
 import DataTransferAction from "cys/models/misc/data-transfer-action";
 import { GameTSA } from "cys/connection/to-server-actions";
 import { GameTCA } from "cys/connection/to-client-actions";
+import { ScoreboardDataKey } from "cys/models/game/score";
 import SocketIOActions from "./socket-io-actions";
 
 export default class GameSocketIOActions extends SocketIOActions {
@@ -23,8 +24,8 @@ export default class GameSocketIOActions extends SocketIOActions {
                 return true;
             }
             case GameTSA.FINISH_TURN: {
-                const { roomId } = action.payload;
-                this.onFinishTurn(roomId);
+                const { roomId, scoringRuleName } = action.payload;
+                this.onFinishTurn(roomId, scoringRuleName);
                 return true;
             }
             default:
@@ -59,9 +60,9 @@ export default class GameSocketIOActions extends SocketIOActions {
         });
     }
 
-    private onFinishTurn(roomId: string) {
+    private onFinishTurn(roomId: string, scoringRuleName: ScoreboardDataKey) {
         const gameInstance = this.ioState.getGame(roomId);
-        gameInstance.endTurn();
+        gameInstance.endTurn(scoringRuleName);
         this.ioState.emitToRoom(roomId, {
             type: GameTCA.PROVIDE_GAME_STATE,
             payload: gameInstance.game,

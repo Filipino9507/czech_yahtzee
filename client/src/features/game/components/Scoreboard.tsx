@@ -48,6 +48,7 @@ const Scoreboard: React.FunctionComponent = () => {
                             {players.map((player) => (
                                 <ScoreboardCell
                                     key={player.playerId}
+                                    scoringRuleName={scoringRuleName}
                                     scored={player.scoreboardData[scoringRuleName].scored}
                                     value={player.scoreboardData[scoringRuleName].value}
                                 />

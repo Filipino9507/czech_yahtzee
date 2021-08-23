@@ -1,9 +1,10 @@
 import { Socket } from "socket.io";
 import Game, { getDefaultGame } from "cys/models/game/game";
 import { DiceValue } from "cys/models/game/dice";
+import { ScoreboardDataKey } from "cys/models/game/score";
 import Player, { getDefaultPlayer } from "cys/models/game/player";
 import { generatePlayerId } from "@logic/connection/id";
-import { peekScores } from "./scoring/scoring";
+import { peekScores, setScore } from "./scoring/scoring";
 
 export default class GameInstance {
     // socketId -> Player
@@ -92,8 +93,9 @@ export default class GameInstance {
         }
     }
 
-    public endTurn(): void {
-        this.score();
+    public endTurn(scoringRuleName: ScoreboardDataKey): void {
+        const scoreboardData = this.game.players[this.game.playerTurn].scoreboardData;
+        setScore(scoringRuleName, scoreboardData);
         for (const dice of this.game.dice) {
             dice.rollState = "IDLE";
             dice.value = 1;
@@ -101,11 +103,5 @@ export default class GameInstance {
         }
         this.game.playerTurn = (this.game.playerTurn + 1) % this.game.playerCount;
         this.game.players[this.game.playerTurn].rolls += 3;
-    }
-
-    private score(): void {
-        /**
-         * Score
-         */
     }
 }

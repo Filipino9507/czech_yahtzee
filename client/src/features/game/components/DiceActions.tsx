@@ -4,13 +4,11 @@ import { Box, Typography, Button } from "@material-ui/core";
 import CasinoIcon from "@material-ui/icons/Casino";
 import LockIcon from "@material-ui/icons/Lock";
 import LockOpenIcon from "@material-ui/icons/LockOpen";
-import DoneSharpIcon from "@material-ui/icons/DoneSharp";
 
 import { useAppDispatch, useAppSelector } from "@app/hooks";
 import {
     rollDice,
     lockInDice,
-    finishTurn,
     roomIdSelector,
     canPlaySelector,
     currentPlayerSelector,
@@ -41,7 +39,6 @@ const DiceActions: React.FunctionComponent = () => {
     const dispatch = useAppDispatch();
     const onRollDice = () => dispatch(rollDice({ roomId }));
     const onLockInDice = (lockedIn: boolean) => dispatch(lockInDice({ roomId, lockedIn }));
-    const onFinishTurn = () => dispatch(finishTurn({ roomId }));
 
     const classes = useStyles();
     return (
@@ -79,15 +76,6 @@ const DiceActions: React.FunctionComponent = () => {
                     onClick={() => onLockInDice(false)}
                 >
                     <LockOpenIcon className={classes.actionButtonIcon} />
-                </Button>
-                <Button
-                    className={classes.actionButton}
-                    variant="contained"
-                    color="secondary"
-                    disabled={!canPlay}
-                    onClick={onFinishTurn}
-                >
-                    <DoneSharpIcon className={classes.actionButtonIcon} />
                 </Button>
             </Box>
         </Box>

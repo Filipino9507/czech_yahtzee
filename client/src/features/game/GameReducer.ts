@@ -1,9 +1,9 @@
 import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "@app/store";
 import Game from "cys/models/game/game";
-import { getDefaultPlayer } from "cys/models/game/player";
 import { DiceRollState } from "cys/models/game/dice";
 import { GameTSA } from "cys/connection/to-server-actions";
+import { ScoreboardDataKey } from "cys/models/game/score";
 
 /**
  * State
@@ -14,7 +14,6 @@ const initialState: GameState = {
     playerCount: 2,
     playerTurn: 0,
     players: [],
-    // players: [getDefaultPlayer("GUEST1", ""), getDefaultPlayer("GUEST2", "")],
     dice: [
         { id: 0, value: 1, rollState: "IDLE", selected: false },
         { id: 1, value: 1, rollState: "IDLE", selected: false },
@@ -31,7 +30,8 @@ const initialState: GameState = {
  * Selectors
  */
 export const diceSelector =
-    (options: { rollState?: DiceRollState; selected?: boolean, sorted?: boolean }) => (state: RootState) => {
+    (options: { rollState?: DiceRollState; selected?: boolean; sorted?: boolean }) =>
+    (state: RootState) => {
         const { rollState, selected, sorted } = options;
         let dice = rollState
             ? state.game.dice.filter((d) => d.rollState === rollState)
@@ -49,6 +49,7 @@ export const playerSelector = (playerIdx: number) => (state: RootState) =>
 export const currentPlayerSelector = (state: RootState) =>
     state.game.players[state.game.playerTurn];
 export const playersSelector = (state: RootState) => state.game.players;
+export const gameLoadedSelector = (state: RootState) => state.game.players.length !== 0;
 
 /**
  * Actions
@@ -66,6 +67,7 @@ export const lockInDice = createAction<{
 }>(GameTSA.LOCK_IN_DICE);
 export const finishTurn = createAction<{
     roomId: string;
+    scoringRuleName: ScoreboardDataKey;
 }>(GameTSA.FINISH_TURN);
 
 /**
