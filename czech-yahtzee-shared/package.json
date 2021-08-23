@@ -1,0 +1,11 @@
+{
+  "name": "czech-yahtzee-shared",
+  "version": "1.0.0",
+  "description": "Shared utils and data types between czech-yahtzee-server and czech-yahtzee-client",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
