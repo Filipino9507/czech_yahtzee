@@ -1,5 +1,5 @@
 import { DiceValue } from "cys/models/game/dice";
-import { ScoreboardData, ScoreboardDataKey } from "cys/models/game/score";
+import { ScoreboardDataKey } from "cys/models/game/score";
 
 export default abstract class ScoringRule {
     public name: ScoreboardDataKey;

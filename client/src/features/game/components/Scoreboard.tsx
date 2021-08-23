@@ -8,26 +8,18 @@ import {
     TableHead,
     TableRow,
     Paper,
-    IconButton,
 } from "@material-ui/core";
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import { ScoreboardDataKey } from "cys/models/game/score";
-import Player from "cys/models/game/player";
 import { getDisplayedScoringRuleName } from "@util/displayed-strings";
+import ScoreboardCell from "./ScoreboardCell";
 
 import { useAppSelector } from "@app/hooks";
 import { playersSelector } from "../GameReducer";
 
-const useStyles = makeStyles((theme) => ({
-    useScoreButton: {
-        maxHeight: "100%",
-    },
-}));
+const useStyles = makeStyles((theme) => ({}));
 
 const Scoreboard: React.FunctionComponent = () => {
     const players = useAppSelector(playersSelector);
-
-    const classes = useStyles();
 
     const renderScoreboardHead = () => (
         <TableHead>
@@ -45,11 +37,6 @@ const Scoreboard: React.FunctionComponent = () => {
     );
 
     const renderScoreboardBody = () => {
-        const shouldBeRed = (player: Player, scoringRuleName: ScoreboardDataKey) => {
-            const score = player.scoreboardData[scoringRuleName];
-            return !score.scored && score.value !== 0;
-        };
-
         return (
             <TableBody>
                 {Object.keys(players[0].scoreboardData).map(
@@ -58,26 +45,13 @@ const Scoreboard: React.FunctionComponent = () => {
                             <TableCell size="small">
                                 <b>{getDisplayedScoringRuleName(scoringRuleName)}</b>
                             </TableCell>
-                            {players.map((player) => {
-                                const isRed = shouldBeRed(player, scoringRuleName);
-                                return (
-                                    <TableCell
-                                        key={player.playerId}
-                                        align="right"
-                                        size="small"
-                                        style={{
-                                            color: isRed ? "red" : "white",
-                                        }}
-                                    >
-                                        {player.scoreboardData[scoringRuleName].value}
-                                        {isRed && (
-                                            <IconButton className={classes.useScoreButton}>
-                                                {/* <CheckCircleIcon /> */}
-                                            </IconButton>
-                                        )}
-                                    </TableCell>
-                                );
-                            })}
+                            {players.map((player) => (
+                                <ScoreboardCell
+                                    key={player.playerId}
+                                    scored={player.scoreboardData[scoringRuleName].scored}
+                                    value={player.scoreboardData[scoringRuleName].value}
+                                />
+                            ))}
                         </TableRow>
                     )
                 )}
