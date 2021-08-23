@@ -3,6 +3,7 @@ export interface Score {
     scored: boolean;
 }
 
+export type ScoreboardDataKey = keyof ScoreboardData;
 export interface ScoreboardData {
     ones: Score;
     twos: Score;

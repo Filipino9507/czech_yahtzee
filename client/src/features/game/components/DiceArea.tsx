@@ -16,9 +16,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const DiceArea: React.FunctionComponent = () => {
-    const idleDice = useAppSelector(diceSelector({ rollState: "IDLE" }));
-    const rolledDice = useAppSelector(diceSelector({ rollState: "ROLLED" }));
-    const lockedInDice = useAppSelector(diceSelector({ rollState: "LOCKED_IN" }));
+    const idleDice = useAppSelector(diceSelector({ rollState: "IDLE", sorted: true }));
+    const rolledDice = useAppSelector(diceSelector({ rollState: "ROLLED", sorted: true }));
+    const lockedInDice = useAppSelector(diceSelector({ rollState: "LOCKED_IN", sorted: true }));
     const classes = useStyles();
     return (
         <Box className={classes.diceArea} border={3} borderColor="primary.main">

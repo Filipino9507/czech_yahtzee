@@ -1,11 +1,12 @@
-import ScoringRule, { ScoringRuleName } from "./scoring-rule";
+import ScoringRule from "./scoring-rule";
 import { DiceValue } from "cys/models/game/dice";
+import { ScoreboardDataKey } from "cys/models/game/score";
 
 type TriangleType = "small" | "large";
 export default class TriangleScoringRule extends ScoringRule {
     private triangleType: TriangleType;
 
-    public constructor(name: ScoringRuleName, triangleType: TriangleType) {
+    public constructor(name: ScoreboardDataKey, triangleType: TriangleType) {
         super(name);
         this.triangleType = triangleType;
     }

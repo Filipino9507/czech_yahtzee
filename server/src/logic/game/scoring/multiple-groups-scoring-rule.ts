@@ -1,10 +1,11 @@
-import ScoringRule, { ScoringRuleName } from "./scoring-rule";
+import ScoringRule from "./scoring-rule";
 import { DiceValue } from "cys/models/game/dice";
+import { ScoreboardDataKey } from "cys/models/game/score";
 
 export default class MultipleGroupsScoringRule extends ScoringRule {
     private groupSize: number;
 
-    public constructor(name: ScoringRuleName, groupSize: number) {
+    public constructor(name: ScoreboardDataKey, groupSize: number) {
         super(name);
         this.groupSize = groupSize;
     }

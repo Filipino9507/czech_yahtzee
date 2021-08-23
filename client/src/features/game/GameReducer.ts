@@ -13,7 +13,8 @@ export type GameState = Game;
 const initialState: GameState = {
     playerCount: 2,
     playerTurn: 0,
-    players: [getDefaultPlayer("GUEST1", ""), getDefaultPlayer("GUEST2", "")],
+    players: [],
+    // players: [getDefaultPlayer("GUEST1", ""), getDefaultPlayer("GUEST2", "")],
     dice: [
         { id: 0, value: 1, rollState: "IDLE", selected: false },
         { id: 1, value: 1, rollState: "IDLE", selected: false },
@@ -30,12 +31,14 @@ const initialState: GameState = {
  * Selectors
  */
 export const diceSelector =
-    (options: { rollState?: DiceRollState; selected?: boolean }) => (state: RootState) => {
-        const { rollState, selected } = options;
+    (options: { rollState?: DiceRollState; selected?: boolean, sorted?: boolean }) => (state: RootState) => {
+        const { rollState, selected, sorted } = options;
         let dice = rollState
             ? state.game.dice.filter((d) => d.rollState === rollState)
             : state.game.dice;
-        return selected ? dice.filter((d) => d.selected === selected) : dice;
+        dice = selected ? dice.filter((d) => d.selected === selected) : dice;
+        dice = sorted ? [...dice].sort((a, b) => a.value - b.value) : dice;
+        return dice;
     };
 export const roomIdSelector = (state: RootState) => state.game.roomId;
 

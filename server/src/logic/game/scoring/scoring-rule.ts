@@ -1,11 +1,10 @@
 import { DiceValue } from "cys/models/game/dice";
-import { ScoreboardData } from "cys/models/game/score";
+import { ScoreboardData, ScoreboardDataKey } from "cys/models/game/score";
 
-export type ScoringRuleName = keyof ScoreboardData;
 export default abstract class ScoringRule {
-    public name: ScoringRuleName;
+    public name: ScoreboardDataKey;
 
-    public constructor(name: ScoringRuleName) {
+    public constructor(name: ScoreboardDataKey) {
         this.name = name;
     }
 

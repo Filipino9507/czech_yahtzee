@@ -1,11 +1,12 @@
-import ScoringRule, { ScoringRuleName } from "./scoring-rule";
+import ScoringRule from "./scoring-rule";
 import { DiceValue } from "cys/models/game/dice";
+import { ScoreboardDataKey } from "cys/models/game/score";
 
 type Predicate = (diceValue: DiceValue) => boolean;
 export default class PredicateScoringRule extends ScoringRule {
     private predicate: Predicate;
 
-    public constructor(name: ScoringRuleName, predicate: Predicate) {
+    public constructor(name: ScoreboardDataKey, predicate: Predicate) {
         super(name);
         this.predicate = predicate;
     }

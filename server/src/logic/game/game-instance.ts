@@ -3,6 +3,7 @@ import Game, { getDefaultGame } from "cys/models/game/game";
 import { DiceValue } from "cys/models/game/dice";
 import Player, { getDefaultPlayer } from "cys/models/game/player";
 import { generatePlayerId } from "@logic/connection/id";
+import { peekScores } from "./scoring/scoring";
 
 export default class GameInstance {
     // socketId -> Player
@@ -74,7 +75,9 @@ export default class GameInstance {
                 dice.rollState = "ROLLED";
             }
         }
-        this.peekScores();
+        const diceValues = this.game.dice.map((d) => d.value);
+        const scoreboardData = this.game.players[this.game.playerTurn].scoreboardData;
+        peekScores(diceValues, scoreboardData);
     }
 
     public toggleSelectDice(diceId: number): void {
@@ -98,10 +101,6 @@ export default class GameInstance {
         }
         this.game.playerTurn = (this.game.playerTurn + 1) % this.game.playerCount;
         this.game.players[this.game.playerTurn].rolls += 3;
-    }
-
-    private peekScores(): void {
-
     }
 
     private score(): void {
