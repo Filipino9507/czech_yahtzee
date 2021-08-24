@@ -21,9 +21,8 @@ interface Props {
 
 const Dice: React.FunctionComponent<Props> = ({ id, value, selected }: Props) => {
     const roomId = useAppSelector(roomIdSelector);
-    console.log(selected);
-    const unselectedImg = useMemo(() => loadDiceImage(value, false), []);
-    const selectedImg = useMemo(() => loadDiceImage(value, true), []);
+    const unselectedImg = loadDiceImage(value, false);
+    const selectedImg = loadDiceImage(value, true);
     const getImg = () => (selected ? selectedImg : unselectedImg);
     const dispatch = useAppDispatch();
 
@@ -38,7 +37,6 @@ const Dice: React.FunctionComponent<Props> = ({ id, value, selected }: Props) =>
             onClick={() => dispatch(toggleSelectDice({ roomId, diceId: id }))}
         />
     );
-    // return <img className={classes.image} src={diceImg} draggable="false" />;
 };
 
 export default Dice;
