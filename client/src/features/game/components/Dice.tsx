@@ -4,7 +4,7 @@ import { loadDiceImage } from "@util/image-loader";
 import { DiceValue } from "cys/models/game/dice";
 
 import { useAppDispatch, useAppSelector } from "@app/hooks";
-import { toggleSelectDice, roomIdSelector } from "../GameReducer";
+import { toggleLockInDice, roomIdSelector } from "../GameReducer";
 
 const useStyles = makeStyles((theme) => ({
     image: {
@@ -16,14 +16,11 @@ const useStyles = makeStyles((theme) => ({
 interface Props {
     id: number;
     value: DiceValue;
-    selected: boolean;
 }
 
-const Dice: React.FunctionComponent<Props> = ({ id, value, selected }: Props) => {
+const Dice: React.FunctionComponent<Props> = ({ id, value }: Props) => {
     const roomId = useAppSelector(roomIdSelector);
-    const unselectedImg = loadDiceImage(value, false);
-    const selectedImg = loadDiceImage(value, true);
-    const getImg = () => (selected ? selectedImg : unselectedImg);
+    const img = loadDiceImage(value);
     const dispatch = useAppDispatch();
 
     const classes = useStyles();
@@ -31,10 +28,10 @@ const Dice: React.FunctionComponent<Props> = ({ id, value, selected }: Props) =>
         <input
             className={classes.image}
             type="image"
-            src={getImg()}
+            src={img}
             draggable={false}
             unselectable="on"
-            onClick={() => dispatch(toggleSelectDice({ roomId, diceId: id }))}
+            onClick={() => dispatch(toggleLockInDice({ roomId, diceId: id }))}
         />
     );
 };

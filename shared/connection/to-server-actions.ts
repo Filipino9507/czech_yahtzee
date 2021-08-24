@@ -13,7 +13,6 @@ export namespace MatchmakerTSA {
 
 export namespace GameTSA {
     export const ROLL_DICE = BASE + "rollDice";
-    export const TOGGLE_SELECT_DICE = BASE + "toggleSelectDice";
-    export const LOCK_IN_DICE = BASE + "lockInDice";
+    export const TOGGLE_LOCK_IN_DICE = BASE + "toggleLockInDice";
     export const FINISH_TURN = BASE + "finishTurn";
 }

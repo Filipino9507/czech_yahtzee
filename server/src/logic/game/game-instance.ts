@@ -74,7 +74,7 @@ export default class GameInstance {
         for (const dice of this.game.dice) {
             if (dice.rollState !== "LOCKED_IN") {
                 dice.value = (Math.floor(Math.random() * 6) + 1) as DiceValue;
-                dice.rollState = "ROLLED";
+                dice.rollState = "IDLE";
             }
         }
         const diceValues = this.game.dice.map((d) => d.value);
@@ -82,16 +82,9 @@ export default class GameInstance {
         peekScores(diceValues, scoreboardData);
     }
 
-    public toggleSelectDice(diceId: number): void {
-        this.game.dice[diceId].selected = !this.game.dice[diceId].selected;
-    }
-
-    public lockInDice(lockedIn: boolean): void {
-        for (const dice of this.game.dice) {
-            if (dice.selected) {
-                dice.rollState = lockedIn ? "LOCKED_IN" : "IDLE";
-            }
-        }
+    public toggleLockInDice(diceId: number): void {
+        const dice = this.game.dice[diceId];
+        dice.rollState = dice.rollState === "LOCKED_IN" ? "IDLE" : "LOCKED_IN";
     }
 
     public endTurn(scoringRuleName: ScoreboardDataKey): void {
@@ -100,7 +93,6 @@ export default class GameInstance {
         for (const dice of this.game.dice) {
             dice.rollState = "IDLE";
             dice.value = 1;
-            dice.selected = false;
         }
         this.game.playerTurn = (this.game.playerTurn + 1) % this.game.playerCount;
         this.game.players[this.game.playerTurn].rolls += 3;

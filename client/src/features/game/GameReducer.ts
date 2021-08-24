@@ -15,12 +15,12 @@ const initialState: GameState = {
     playerTurn: 0,
     players: [],
     dice: [
-        { id: 0, value: 1, rollState: "IDLE", selected: false },
-        { id: 1, value: 1, rollState: "IDLE", selected: false },
-        { id: 2, value: 1, rollState: "IDLE", selected: false },
-        { id: 3, value: 1, rollState: "IDLE", selected: false },
-        { id: 4, value: 1, rollState: "IDLE", selected: false },
-        { id: 5, value: 1, rollState: "IDLE", selected: false },
+        { id: 0, value: 1, rollState: "IDLE" },
+        { id: 1, value: 1, rollState: "IDLE" },
+        { id: 2, value: 1, rollState: "IDLE" },
+        { id: 3, value: 1, rollState: "IDLE" },
+        { id: 4, value: 1, rollState: "IDLE" },
+        { id: 5, value: 1, rollState: "IDLE" },
     ],
     diceCount: 6,
     roomId: "",
@@ -30,13 +30,12 @@ const initialState: GameState = {
  * Selectors
  */
 export const diceSelector =
-    (options: { rollState?: DiceRollState; selected?: boolean; sorted?: boolean }) =>
+    (options: { rollState?: DiceRollState; sorted?: boolean }) =>
     (state: RootState) => {
-        const { rollState, selected, sorted } = options;
+        const { rollState, sorted } = options;
         let dice = rollState
             ? state.game.dice.filter((d) => d.rollState === rollState)
             : state.game.dice;
-        dice = selected ? dice.filter((d) => d.selected === selected) : dice;
         dice = sorted ? [...dice].sort((a, b) => a.value - b.value) : dice;
         return dice;
     };
@@ -57,14 +56,10 @@ export const gameLoadedSelector = (state: RootState) => state.game.players.lengt
 export const rollDice = createAction<{
     roomId: string;
 }>(GameTSA.ROLL_DICE);
-export const toggleSelectDice = createAction<{
+export const toggleLockInDice = createAction<{
     roomId: string;
     diceId: number;
-}>(GameTSA.TOGGLE_SELECT_DICE);
-export const lockInDice = createAction<{
-    roomId: string;
-    lockedIn: boolean;
-}>(GameTSA.LOCK_IN_DICE);
+}>(GameTSA.TOGGLE_LOCK_IN_DICE);
 export const finishTurn = createAction<{
     roomId: string;
     scoringRuleName: ScoreboardDataKey;
@@ -80,11 +75,6 @@ const GameSlice = createSlice({
         // To-client socket.io actions
         provideGameState(_: GameState, action: PayloadAction<Game>) {
             return { ...action.payload };
-        },
-        unselectAllDice(state: GameState) {
-            for (const dice of state.dice) {
-                dice.selected = false;
-            }
         },
     },
     extraReducers: {},

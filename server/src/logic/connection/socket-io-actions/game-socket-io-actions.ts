@@ -13,14 +13,9 @@ export default class GameSocketIOActions extends SocketIOActions {
                 this.onRollDice(roomId);
                 return true;
             }
-            case GameTSA.TOGGLE_SELECT_DICE: {
+            case GameTSA.TOGGLE_LOCK_IN_DICE: {
                 const { roomId, diceId } = action.payload;
-                this.onToggleSelectDice(roomId, diceId);
-                return true;
-            }
-            case GameTSA.LOCK_IN_DICE: {
-                const { roomId, lockedIn } = action.payload;
-                this.onLockInDice(roomId, lockedIn);
+                this.onToggleLockInDice(roomId, diceId);
                 return true;
             }
             case GameTSA.FINISH_TURN: {
@@ -42,18 +37,9 @@ export default class GameSocketIOActions extends SocketIOActions {
         });
     }
 
-    private onToggleSelectDice(roomId: string, diceId: number) {
+    private onToggleLockInDice(roomId: string, diceId: number) {
         const gameInstance = this.ioState.getGame(roomId);
-        gameInstance.toggleSelectDice(diceId);
-        this.ioState.emitToRoom(roomId, {
-            type: GameTCA.PROVIDE_GAME_STATE,
-            payload: gameInstance.game,
-        });
-    }
-
-    private onLockInDice(roomId: string, lockedIn: boolean) {
-        const gameInstance = this.ioState.getGame(roomId);
-        gameInstance.lockInDice(lockedIn);
+        gameInstance.toggleLockInDice(diceId);
         this.ioState.emitToRoom(roomId, {
             type: GameTCA.PROVIDE_GAME_STATE,
             payload: gameInstance.game,

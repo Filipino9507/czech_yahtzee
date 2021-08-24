@@ -17,26 +17,19 @@ const useStyles = makeStyles((theme) => ({
 
 const DiceArea: React.FunctionComponent = () => {
     const idleDice = useAppSelector(diceSelector({ rollState: "IDLE", sorted: true }));
-    const rolledDice = useAppSelector(diceSelector({ rollState: "ROLLED", sorted: true }));
     const lockedInDice = useAppSelector(diceSelector({ rollState: "LOCKED_IN", sorted: true }));
     const classes = useStyles();
     return (
         <Box className={classes.diceArea} border={3} borderColor="primary.main">
             <Grid className={classes.diceSubarea}>
                 {idleDice.map((d) => (
-                    <Dice key={d.id} id={d.id} value={d.value} selected={d.selected} />
-                ))}
-            </Grid>
-            <Divider />
-            <Grid className={classes.diceSubarea}>
-                {rolledDice.map((d) => (
-                    <Dice key={d.id} id={d.id} value={d.value} selected={d.selected} />
+                    <Dice key={d.id} id={d.id} value={d.value} />
                 ))}
             </Grid>
             <Divider />
             <Grid className={classes.diceSubarea}>
                 {lockedInDice.map((d) => (
-                    <Dice key={d.id} id={d.id} value={d.value} selected={d.selected} />
+                    <Dice key={d.id} id={d.id} value={d.value} />
                 ))}
             </Grid>
         </Box>

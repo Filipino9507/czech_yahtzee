@@ -2,13 +2,10 @@ import React from "react";
 import { makeStyles } from "@material-ui/core";
 import { Box, Typography, Button } from "@material-ui/core";
 import CasinoIcon from "@material-ui/icons/Casino";
-import LockIcon from "@material-ui/icons/Lock";
-import LockOpenIcon from "@material-ui/icons/LockOpen";
 
 import { useAppDispatch, useAppSelector } from "@app/hooks";
 import {
     rollDice,
-    lockInDice,
     roomIdSelector,
     canPlaySelector,
     currentPlayerSelector,
@@ -38,7 +35,6 @@ const DiceActions: React.FunctionComponent = () => {
 
     const dispatch = useAppDispatch();
     const onRollDice = () => dispatch(rollDice({ roomId }));
-    const onLockInDice = (lockedIn: boolean) => dispatch(lockInDice({ roomId, lockedIn }));
 
     const classes = useStyles();
     return (
@@ -58,24 +54,6 @@ const DiceActions: React.FunctionComponent = () => {
                     onClick={onRollDice}
                 >
                     <CasinoIcon className={classes.actionButtonIcon} />
-                </Button>
-                <Button
-                    className={classes.actionButton}
-                    variant="contained"
-                    color="primary"
-                    disabled={!canPlay}
-                    onClick={() => onLockInDice(true)}
-                >
-                    <LockIcon className={classes.actionButtonIcon} />
-                </Button>
-                <Button
-                    className={classes.actionButton}
-                    variant="contained"
-                    color="primary"
-                    disabled={!canPlay}
-                    onClick={() => onLockInDice(false)}
-                >
-                    <LockOpenIcon className={classes.actionButtonIcon} />
                 </Button>
             </Box>
         </Box>
