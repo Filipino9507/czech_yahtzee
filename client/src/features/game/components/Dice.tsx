@@ -4,7 +4,8 @@ import { loadDiceImage } from "@util/image-loader";
 import { DiceValue } from "cys/models/game/dice";
 
 import { useAppDispatch, useAppSelector } from "@app/hooks";
-import { toggleLockInDice, roomIdSelector } from "../GameReducer";
+import { toggleLockInDice, roomIdSelector, canPlaySelector } from "../GameReducer";
+import { playerIdxSelector } from "@features/matchmaker/MatchmakerReducer";
 
 const useStyles = makeStyles((theme) => ({
     image: {
@@ -20,6 +21,9 @@ interface Props {
 
 const Dice: React.FunctionComponent<Props> = ({ id, value }: Props) => {
     const roomId = useAppSelector(roomIdSelector);
+    const playerIdx = useAppSelector(playerIdxSelector);
+    const canPlay = useAppSelector(canPlaySelector(playerIdx));
+
     const img = loadDiceImage(value);
     const dispatch = useAppDispatch();
 
@@ -31,6 +35,7 @@ const Dice: React.FunctionComponent<Props> = ({ id, value }: Props) => {
             src={img}
             draggable={false}
             unselectable="on"
+            disabled={!canPlay}
             onClick={() => dispatch(toggleLockInDice({ roomId, diceId: id }))}
         />
     );

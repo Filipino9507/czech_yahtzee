@@ -43,7 +43,7 @@ const DiceActions: React.FunctionComponent = () => {
                 {currentPlayer.displayedName}'s Turn
             </Typography>
             <Typography className={classes.actionText} variant="h6">
-                Rolls: 3
+                Rolls: {currentPlayer.rolls}
             </Typography>
             <Box display="flex" flexDirection="row">
                 <Button

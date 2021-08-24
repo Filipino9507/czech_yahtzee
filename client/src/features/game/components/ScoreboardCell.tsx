@@ -3,7 +3,8 @@ import { makeStyles, TableCell, Link } from "@material-ui/core";
 import { ScoreboardDataKey } from "cys/models/game/score";
 
 import { useAppDispatch, useAppSelector } from "@app/hooks";
-import { finishTurn, roomIdSelector } from "../GameReducer";
+import { canPlaySelector, finishTurn, roomIdSelector } from "../GameReducer";
+import { playerIdxSelector } from "@features/matchmaker/MatchmakerReducer";
 
 const useStyles = makeStyles((theme) => ({}));
 
@@ -11,22 +12,26 @@ interface Props {
     scoringRuleName: ScoreboardDataKey;
     scored: boolean;
     value: number;
+    cellPlayerIdx: number;
 }
 
 const ScoreboardCell: React.FunctionComponent<Props> = ({
     scoringRuleName,
     scored,
     value,
+    cellPlayerIdx,
 }: Props) => {
     const roomId = useAppSelector(roomIdSelector);
+    const playerIdx = useAppSelector(playerIdxSelector);
+    const canPlay = useAppSelector(canPlaySelector(playerIdx));
 
     const dispatch = useAppDispatch();
     const onFinishTurn = () => dispatch(finishTurn({ roomId, scoringRuleName }));
 
-    const isPeeked = !scored && value !== 0;
+    const canFinishTurn = !scored && playerIdx === cellPlayerIdx && canPlay;
     return (
         <TableCell align="right" size="small">
-            {isPeeked ? <Link onClick={onFinishTurn}>{value}</Link> : value}
+            {canFinishTurn ? <Link onClick={onFinishTurn}>{value}</Link> : value}
         </TableCell>
     );
 };

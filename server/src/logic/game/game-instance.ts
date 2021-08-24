@@ -4,7 +4,7 @@ import { DiceValue } from "cys/models/game/dice";
 import { ScoreboardDataKey } from "cys/models/game/score";
 import Player, { getDefaultPlayer } from "cys/models/game/player";
 import { generatePlayerId } from "@logic/connection/id";
-import { peekScores, setScore } from "./scoring/scoring";
+import { peekScores, setScore, calculateTotalScore } from "./scoring/scoring";
 
 export default class GameInstance {
     // socketId -> Player
@@ -69,6 +69,10 @@ export default class GameInstance {
         }
     }
 
+    public giveStartingRolls(): void {
+        this.game.players[this.game.playerTurn].rolls += 3;
+    }
+
     public rollDice(): void {
         --this.game.players[this.game.playerTurn].rolls;
         for (const dice of this.game.dice) {
@@ -88,13 +92,14 @@ export default class GameInstance {
     }
 
     public endTurn(scoringRuleName: ScoreboardDataKey): void {
-        const scoreboardData = this.game.players[this.game.playerTurn].scoreboardData;
-        setScore(scoringRuleName, scoreboardData);
+        const currentPlayer = this.game.players[this.game.playerTurn];
+        setScore(scoringRuleName, currentPlayer.scoreboardData);
+        currentPlayer.score = calculateTotalScore(currentPlayer.scoreboardData);
         for (const dice of this.game.dice) {
             dice.rollState = "IDLE";
             dice.value = 1;
         }
         this.game.playerTurn = (this.game.playerTurn + 1) % this.game.playerCount;
-        this.game.players[this.game.playerTurn].rolls += 3;
+        this.giveStartingRolls();
     }
 }

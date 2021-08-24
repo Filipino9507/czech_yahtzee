@@ -60,3 +60,11 @@ export const setScore = (scoringRuleName: ScoreboardDataKey, scoreboardData: Sco
     }
     clearPeekedScores(scoreboardData);
 };
+
+export const calculateTotalScore = (scoreboardData: ScoreboardData) => {
+    let totalScore = 0;
+    for (const scoringRuleName in scoreboardData) {
+        totalScore += scoreboardData[scoringRuleName as ScoreboardDataKey].value;
+    }
+    return totalScore;
+};

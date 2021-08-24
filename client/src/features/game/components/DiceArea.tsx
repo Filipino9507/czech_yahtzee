@@ -1,5 +1,6 @@
 import React from "react";
 import { Box, Divider, Grid, makeStyles } from "@material-ui/core";
+import LockIcon from '@material-ui/icons/Lock';
 import { useAppSelector } from "@app/hooks";
 
 import Dice from "./Dice";
@@ -27,11 +28,18 @@ const DiceArea: React.FunctionComponent = () => {
                 ))}
             </Grid>
             <Divider />
-            <Grid className={classes.diceSubarea}>
-                {lockedInDice.map((d) => (
-                    <Dice key={d.id} id={d.id} value={d.value} />
-                ))}
-            </Grid>
+            <Box display="flex" flexDirection="row">
+                <Grid className={classes.diceSubarea}>
+                    {lockedInDice.map((d) => (
+                        <Dice key={d.id} id={d.id} value={d.value} />
+                    ))}
+                    
+                </Grid>
+                <Box alignSelf="center">
+                    <LockIcon />
+                </Box>
+                
+            </Box>     
         </Box>
     );
 };
