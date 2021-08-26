@@ -11,7 +11,7 @@ export default class PredicateScoringRule extends ScoringRule {
         this.predicate = predicate;
     }
 
-    public calculateScore(diceValues: DiceValue[]): number {
+    public override calculateScore(diceValues: DiceValue[]): number {
         let result = 0;
         for (const value of diceValues) {
             if (this.predicate(value)) {

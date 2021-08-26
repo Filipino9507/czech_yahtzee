@@ -2,7 +2,7 @@ import ScoringRule from "./scoring-rule";
 import { DiceValue } from "cys/models/game/dice";
 
 export default class RunScoringRule extends ScoringRule {
-    public calculateScore(diceValues: DiceValue[]) {
+    public override calculateScore(diceValues: DiceValue[]) {
         const visited = new Array(6).fill(false);
         for (let i = 0; i < 6; ++i) {
             if (visited[diceValues[i] - 1]) {

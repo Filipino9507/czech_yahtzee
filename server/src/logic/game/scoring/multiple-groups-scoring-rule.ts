@@ -10,7 +10,7 @@ export default class MultipleGroupsScoringRule extends ScoringRule {
         this.groupSize = groupSize;
     }
 
-    public calculateScore(diceValues: DiceValue[]): number {
+    public override calculateScore(diceValues: DiceValue[]): number {
         const valueCounts = ScoringRule.getValueCounts(diceValues);
         for (const value of Array.from(valueCounts.keys())) {
             let count;

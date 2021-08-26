@@ -11,7 +11,7 @@ export default class TriangleScoringRule extends ScoringRule {
         this.triangleType = triangleType;
     }
 
-    public calculateScore(diceValues: DiceValue[]): number {
+    public override calculateScore(diceValues: DiceValue[]): number {
         const valueCounts = ScoringRule.getValueCounts(diceValues);
         const mapValues = Array.from(valueCounts.keys());
         mapValues.sort();
