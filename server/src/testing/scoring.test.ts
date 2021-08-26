@@ -64,6 +64,11 @@ test("Calculates single group", () => {
     expect(rule.calculateScore([4, 4, 4, 4, 6, 4])).toBe(20);
 });
 
+test("Calculates single group with more", () => {
+    const rule = new SingleGroupScoringRule("poker", 5);
+    expect(rule.calculateScore([2, 2, 2, 2, 2, 2])).toBe(10);
+});
+
 test("Calculates incorrect single group", () => {
     const rule = new SingleGroupScoringRule("poker", 6);
     expect(rule.calculateScore([4, 4, 4, 4, 6, 4])).toBe(0);

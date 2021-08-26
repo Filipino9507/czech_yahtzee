@@ -11,6 +11,18 @@ const theme = createTheme({
             main: indigo[500],
         },
     },
+    overrides: {
+        MuiTooltip: {
+            tooltip: {
+                fontSize: "1em"
+            }
+        },
+        MuiTableCell: {
+            root: {
+                fontSize: "1.1em",
+            }
+        }
+    }
 });
 
 export default theme;

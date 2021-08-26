@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core";
 import { Card, Box } from "@material-ui/core";
 import DiceArea from "./components/DiceArea";
 import DiceActions from "./components/DiceActions";
-import Scoreboard from "./components/Scoreboard";
+import Scoreboard from "./components/scoreboard/Scoreboard";
 
 import { useAppDispatch, useAppSelector } from "@app/hooks";
 import { playerIdxSelector, requestStoredGame } from "@features/matchmaker/MatchmakerReducer";

@@ -3,10 +3,14 @@ import { makeStyles, TableCell, Link } from "@material-ui/core";
 import { ScoreboardDataKey } from "cys/models/game/score";
 
 import { useAppDispatch, useAppSelector } from "@app/hooks";
-import { canPlaySelector, finishTurn, roomIdSelector } from "../GameReducer";
+import { canPlaySelector, finishTurn, roomIdSelector } from "../../GameReducer";
 import { playerIdxSelector } from "@features/matchmaker/MatchmakerReducer";
 
-const useStyles = makeStyles((theme) => ({}));
+const useStyles = makeStyles((theme) => ({
+    link: {
+        cursor: "pointer",
+    },
+}));
 
 interface Props {
     scoringRuleName: ScoreboardDataKey;
@@ -15,7 +19,7 @@ interface Props {
     cellPlayerIdx: number;
 }
 
-const ScoreboardCell: React.FunctionComponent<Props> = ({
+const ScoreboardDataCell: React.FunctionComponent<Props> = ({
     scoringRuleName,
     scored,
     value,
@@ -29,11 +33,22 @@ const ScoreboardCell: React.FunctionComponent<Props> = ({
     const onFinishTurn = () => dispatch(finishTurn({ roomId, scoringRuleName }));
 
     const canFinishTurn = !scored && playerIdx === cellPlayerIdx && canPlay;
+    const classes = useStyles();
     return (
         <TableCell align="right" size="small">
-            {canFinishTurn ? <Link onClick={onFinishTurn}>{value}</Link> : value}
+            {canFinishTurn ? (
+                <Link
+                    className={classes.link}
+                    style={{ textDecoration: "none" }}
+                    onClick={onFinishTurn}
+                >
+                    <b>{value}</b>
+                </Link>
+            ) : (
+                value
+            )}
         </TableCell>
     );
 };
 
-export default ScoreboardCell;
+export default ScoreboardDataCell;

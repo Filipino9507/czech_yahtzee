@@ -13,9 +13,9 @@ export default class SingleGroupScoringRule extends ScoringRule {
     public calculateScore(diceValues: DiceValue[]): number {
         const valueCounts = ScoringRule.getValueCounts(diceValues);
         for (const value of Array.from(valueCounts.keys())) {
-            const count = valueCounts.get(value);
-            if (count === this.groupSize) {
-                return count * value;
+            const count = valueCounts.get(value) as number;
+            if (count >= this.groupSize) {
+                return this.groupSize * value;
             }
         }
         return 0;
