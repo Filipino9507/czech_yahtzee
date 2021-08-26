@@ -1,5 +1,5 @@
 import React from "react";
-import { makeStyles, TableCell, Link } from "@material-ui/core";
+import { makeStyles, TableCell, Link, Theme } from "@material-ui/core";
 import { ScoreboardDataKey } from "cys/models/game/score";
 
 import { useAppDispatch, useAppSelector } from "@app/hooks";

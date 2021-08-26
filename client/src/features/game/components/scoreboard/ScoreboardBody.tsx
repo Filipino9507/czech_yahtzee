@@ -9,6 +9,10 @@ import {
 } from "@util/displayed-strings";
 import ScoreboardDataCell from "./ScoreboardDataCell";
 
+import { useAppSelector } from "@app/hooks";
+import { canPlaySelector } from "../../GameReducer";
+import { playerIdxSelector } from "@features/matchmaker/MatchmakerReducer";
+
 const useStyles = makeStyles((theme) => ({
     infoIconTableCell: {
         paddingLeft: theme.spacing(1),
@@ -23,34 +27,38 @@ interface Props {
 }
 
 const ScoreboardBody: React.FunctionComponent<Props> = ({ players }: Props) => {
+    const playerIdx = useAppSelector(playerIdxSelector);
+    
     const classes = useStyles();
     return (
         <TableBody>
-            {Object.keys(players[0].scoreboardData).map((scoringRuleName: ScoreboardDataKey) => (
-                <TableRow key={scoringRuleName}>
-                    <TableCell
-                        className={classes.infoIconTableCell}
-                        padding="checkbox"
-                        size="small"
-                    >
-                        <Tooltip title={getDisplayedScoringRuleDescription(scoringRuleName)} arrow>
-                            <InfoIcon />
-                        </Tooltip>
-                    </TableCell>
-                    <TableCell size="small">
-                        <b>{getDisplayedScoringRuleName(scoringRuleName)}</b>
-                    </TableCell>
-                    {players.map((player, playerIdx) => (
-                        <ScoreboardDataCell
-                            key={player.playerId}
-                            cellPlayerIdx={playerIdx}
-                            scoringRuleName={scoringRuleName}
-                            scored={player.scoreboardData[scoringRuleName].scored}
-                            value={player.scoreboardData[scoringRuleName].value}
-                        />
-                    ))}
-                </TableRow>
-            ))}
+            {Object.keys(players[0].scoreboardData).map((scoringRuleName: ScoreboardDataKey) => {
+                return (
+                    <TableRow key={scoringRuleName}>
+                        <TableCell
+                            className={classes.infoIconTableCell}
+                            padding="checkbox"
+                            size="small"
+                        >
+                            <Tooltip title={getDisplayedScoringRuleDescription(scoringRuleName)} arrow>
+                                <InfoIcon />
+                            </Tooltip>
+                        </TableCell>
+                        <TableCell size="small">
+                            <b>{getDisplayedScoringRuleName(scoringRuleName)}</b>
+                        </TableCell>
+                        {players.map((player, playerIdx) => (
+                            <ScoreboardDataCell
+                                key={player.playerId}
+                                cellPlayerIdx={playerIdx}
+                                scoringRuleName={scoringRuleName}
+                                scored={player.scoreboardData[scoringRuleName].scored}
+                                value={player.scoreboardData[scoringRuleName].value}
+                            />
+                        ))}
+                    </TableRow>
+                );
+            })}
         </TableBody>
     );
 };
