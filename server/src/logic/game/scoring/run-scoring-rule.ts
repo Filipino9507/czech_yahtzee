@@ -10,6 +10,6 @@ export default class RunScoringRule extends ScoringRule {
             }
             visited[diceValues[i] - 1] = true;
         }
-        return 21;        
+        return 21;
     }
 }
