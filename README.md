@@ -1,5 +1,11 @@
-# yahtzee
- Yahtzee game with extra rules, powerups, server and matchmaking
+# Czech Yahtzee
+ Czech version of the Yahtzee game with extra rules, powerups, server
+ and matchmaking. It includes six dice instead of five, which implies different
+ scoring rules, as well as the capacity to save dice rolls, which adds more
+ strategy.
+
+ Matchmaking using game code generation is the way to play, for 2-4 players.
+
 
 # redux-socket.io
 MIT License:
