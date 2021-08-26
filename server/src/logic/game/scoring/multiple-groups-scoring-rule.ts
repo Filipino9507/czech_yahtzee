@@ -15,10 +15,7 @@ export default class MultipleGroupsScoringRule extends ScoringRule {
         for (const value of Array.from(valueCounts.keys())) {
             let count;
             do {
-                count = valueCounts.get(value);
-                if (!count) {
-                    return 0;
-                }
+                count = valueCounts.get(value) as number;
                 valueCounts.set(value, count - this.groupSize);
             } while (count > 0);
             if (count !== 0) {

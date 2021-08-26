@@ -50,7 +50,7 @@ const DiceActions: React.FunctionComponent = () => {
                     className={classes.actionButton}
                     variant="contained"
                     color="primary"
-                    disabled={!canPlay}
+                    disabled={!canPlay || currentPlayer.rolls === 0}
                     onClick={onRollDice}
                 >
                     <CasinoIcon className={classes.actionButtonIcon} />

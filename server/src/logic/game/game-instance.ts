@@ -74,6 +74,9 @@ export default class GameInstance {
     }
 
     public rollDice(): void {
+        if (this.game.players[this.game.playerTurn].rolls === 0) {
+            return;
+        }
         --this.game.players[this.game.playerTurn].rolls;
         for (const dice of this.game.dice) {
             if (dice.rollState !== "LOCKED_IN") {
