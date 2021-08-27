@@ -7,6 +7,7 @@ import { MatchmakerTSA } from "cys/connection/to-server-actions";
  */
 export interface MatchmakerState {
     inGame: boolean;
+    isWaiting: boolean;
     isHost: boolean;
     roomId: string | null;
     playerCount: number;
@@ -16,6 +17,7 @@ export interface MatchmakerState {
 
 const initialState: MatchmakerState = {
     inGame: false,
+    isWaiting: false,
     isHost: false,
     roomId: null,
     playerCount: 0,
@@ -31,6 +33,8 @@ export const playerIdxSelector = (state: RootState) => state.matchmaker.playerId
 export const inGameSelector = (state: RootState) => state.matchmaker.inGame;
 export const playerCountSelector = (state: RootState) => state.matchmaker.playerCount;
 export const currentPlayerCountSelector = (state: RootState) => state.matchmaker.currentPlayerCount;
+export const isNonHostWaitingSelector = (state: RootState) =>
+    !state.matchmaker.isHost && state.matchmaker.isWaiting;
 
 /**
  * Actions
@@ -83,14 +87,20 @@ const MatchmakerSlice = createSlice({
             action: PayloadAction<{
                 playerIdx: number;
                 isHost: boolean;
+                isWaiting: boolean;
             }>
         ) {
-            const { playerIdx, isHost } = action.payload;
+            const { playerIdx, isHost, isWaiting } = action.payload;
             state.playerIdx = playerIdx;
             state.isHost = isHost;
+            state.isWaiting = isWaiting;
         },
         provideInGameStatus(state: MatchmakerState, action: PayloadAction<boolean>) {
-            state.inGame = action.payload;
+            const inGame = action.payload;
+            state.inGame = inGame;
+            if (inGame) {
+                state.isWaiting = false;
+            }
         },
         error(state: MatchmakerState, action: PayloadAction<string>) {
             const errorMessage = action.payload;

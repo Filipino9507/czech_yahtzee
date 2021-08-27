@@ -7,7 +7,7 @@ import Scoreboard from "./components/scoreboard/Scoreboard";
 
 import { useAppDispatch, useAppSelector } from "@app/hooks";
 import { playerIdxSelector, requestStoredGame } from "@features/matchmaker/MatchmakerReducer";
-import { roomIdSelector, playerSelector, gameLoadedSelector } from "./GameReducer";
+import { roomIdSelector, playerSelector, playersSelector } from "./GameReducer";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -53,8 +53,8 @@ const Game: React.FunctionComponent = () => {
 };
 
 const GameLoadingWrapper: React.FunctionComponent = () => {
-    const gameLoaded = useAppSelector(gameLoadedSelector);
-    if (!gameLoaded) {
+    const players = useAppSelector(playersSelector);
+    if (players.length === 0) {
         return (
             <div>LOADING</div>
         );

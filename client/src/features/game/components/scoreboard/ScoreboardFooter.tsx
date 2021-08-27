@@ -23,7 +23,7 @@ const ScoreboardFooter: React.FunctionComponent<Props> = ({ players }: Props) =>
                     </TableCell>
                 ))}
             </TableRow>
-            <ScoreboardEmptyRow />
+            <ScoreboardEmptyRow playerColumnCount={players.length} />
             <TableRow>
                 <TableCell padding="checkbox" variant="head" />
                 <TableCell size="small">

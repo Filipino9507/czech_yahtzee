@@ -48,7 +48,6 @@ export const playerSelector = (playerIdx: number) => (state: RootState) =>
 export const currentPlayerSelector = (state: RootState) =>
     state.game.players[state.game.playerTurn];
 export const playersSelector = (state: RootState) => state.game.players;
-export const gameLoadedSelector = (state: RootState) => state.game.players.length !== 0;
 
 /**
  * Actions
