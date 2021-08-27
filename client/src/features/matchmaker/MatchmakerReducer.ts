@@ -7,16 +7,20 @@ import { MatchmakerTSA } from "cys/connection/to-server-actions";
  */
 export interface MatchmakerState {
     inGame: boolean;
+    isHost: boolean;
     roomId: string | null;
+    playerCount: number;
+    currentPlayerCount: number;
     playerIdx: number | null;
-    errorMessage: string;
 }
 
 const initialState: MatchmakerState = {
     inGame: false,
+    isHost: false,
     roomId: null,
+    playerCount: 0,
+    currentPlayerCount: 0,
     playerIdx: null,
-    errorMessage: "",
 };
 
 /**
@@ -25,6 +29,8 @@ const initialState: MatchmakerState = {
 export const roomIdSelector = (state: RootState) => state.matchmaker.roomId;
 export const playerIdxSelector = (state: RootState) => state.matchmaker.playerIdx;
 export const inGameSelector = (state: RootState) => state.matchmaker.inGame;
+export const playerCountSelector = (state: RootState) => state.matchmaker.playerCount;
+export const currentPlayerCountSelector = (state: RootState) => state.matchmaker.currentPlayerCount;
 
 /**
  * Actions
@@ -40,9 +46,16 @@ export const addPlayerToExistingRoom = createAction<{
     roomId: string;
     userId?: string;
 }>(MatchmakerTSA.ADD_PLAYER_TO_EXISTING_ROOM);
+export const startGame = createAction<{
+    roomId: string;
+}>(MatchmakerTSA.START_GAME);
 export const removePlayerFromExistingRoom = createAction<{
     roomId: string | null;
 }>(MatchmakerTSA.REMOVE_PLAYER_FROM_EXISTING_ROOM);
+export const setPlayerCount = createAction<{
+    roomId: string;
+    newPlayerCount: number;
+}>(MatchmakerTSA.SET_PLAYER_COUNT);
 
 /**
  * Slice
@@ -52,23 +65,35 @@ const MatchmakerSlice = createSlice({
     initialState,
     reducers: {
         // To-client socket.io actions
-        provideRoomMeta(
+        provideRoomData(
             state: MatchmakerState,
             action: PayloadAction<{
                 roomId: string;
-                playerIdx: number;
+                playerCount: number;
+                currentPlayerCount: number;
             }>
         ) {
-            const { roomId, playerIdx } = action.payload;
+            const { roomId, playerCount, currentPlayerCount } = action.payload;
             state.roomId = roomId;
-            state.playerIdx = playerIdx;
+            state.playerCount = playerCount;
+            state.currentPlayerCount = currentPlayerCount;
         },
-        setInGameStatus(state: MatchmakerState, action: PayloadAction<boolean>) {
+        providePlayerData(
+            state: MatchmakerState,
+            action: PayloadAction<{
+                playerIdx: number;
+                isHost: boolean;
+            }>
+        ) {
+            const { playerIdx, isHost } = action.payload;
+            state.playerIdx = playerIdx;
+            state.isHost = isHost;
+        },
+        provideInGameStatus(state: MatchmakerState, action: PayloadAction<boolean>) {
             state.inGame = action.payload;
         },
         error(state: MatchmakerState, action: PayloadAction<string>) {
             const errorMessage = action.payload;
-            state.errorMessage = errorMessage;
             alert(errorMessage);
         },
     },

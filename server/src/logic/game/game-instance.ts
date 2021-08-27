@@ -10,14 +10,20 @@ export default class GameInstance {
     // socketId -> Player
     private playerMap: Map<string, Player>;
 
-    public game: Game;
-    public get hasStarted(): boolean {
-        return this.game.playerCount === this.game.players.length;
+    private game: Game;
+    public get gameData(): Game {
+        return JSON.parse(JSON.stringify(this.game));
     }
-    public get playerCount(): number {
+    public get currentPlayerCount(): number {
         return this.game.players.length;
     }
-    
+    public get playerCount(): number {
+        return this.game.playerCount;
+    }
+    public set playerCount(value: number) {
+        this.game.playerCount = value;
+    }
+
     public constructor(roomId: string) {
         this.game = getDefaultGame(roomId);
         this.playerMap = new Map();
@@ -44,7 +50,7 @@ export default class GameInstance {
     /**
      *
      * @param socket socket of the player to add
-     * @param playerId if the player reloaded the page, this allows 
+     * @param playerId if the player reloaded the page, this allows
      * the server to identify them
      * @param userId potential userId if the player is not a guest
      * @returns index of the player for determining order

@@ -33,7 +33,7 @@ export default class GameSocketIOActions extends SocketIOActions {
         gameInstance.rollDice();
         this.ioState.emitToRoom(roomId, {
             type: GameTCA.PROVIDE_GAME_STATE,
-            payload: gameInstance.game,
+            payload: gameInstance.gameData,
         });
     }
 
@@ -42,7 +42,7 @@ export default class GameSocketIOActions extends SocketIOActions {
         gameInstance.toggleLockInDice(diceId);
         this.ioState.emitToRoom(roomId, {
             type: GameTCA.PROVIDE_GAME_STATE,
-            payload: gameInstance.game,
+            payload: gameInstance.gameData,
         });
     }
 
@@ -51,7 +51,7 @@ export default class GameSocketIOActions extends SocketIOActions {
         gameInstance.endTurn(scoringRuleName);
         this.ioState.emitToRoom(roomId, {
             type: GameTCA.PROVIDE_GAME_STATE,
-            payload: gameInstance.game,
+            payload: gameInstance.gameData,
         });
     }
 }

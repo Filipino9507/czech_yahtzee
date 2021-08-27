@@ -5,8 +5,9 @@
 export namespace MatchmakerTCA {
     const BASE = "matchmaker/";
 
-    export const PROVIDE_ROOM_META = BASE + "provideRoomMeta";
-    export const SET_IN_GAME_STATUS = BASE + "setInGameStatus";
+    export const PROVIDE_ROOM_DATA = BASE + "provideRoomData";
+    export const PROVIDE_PLAYER_DATA = BASE + "providePlayerData";
+    export const PROVIDE_IN_GAME_STATUS = BASE + "provideInGameStatus";
     
     export const ERROR = BASE + "error";
 }
