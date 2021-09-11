@@ -9,7 +9,9 @@ export const getDisplayedScoringRuleName = (scoreboardDataKey: ScoreboardDataKey
     return splitKey.join(" ");
 };
 
-export const getDisplayedScoringRuleDescription = (scoreboardDataKey: ScoreboardDataKey) => {
+export const getDisplayedScoringRuleDescription = (
+    scoreboardDataKey: ScoreboardDataKey | "total"
+) => {
     switch (scoreboardDataKey) {
         case "ones":
             return dedent`
@@ -85,6 +87,12 @@ export const getDisplayedScoringRuleDescription = (scoreboardDataKey: Scoreboard
         case "general":
             return dedent`
                 Scores only if all six of the dice show the same value.
+            `;
+        case "total":
+            return dedent`
+                Total points are defined as the sum of all the scoring rules,
+                plus one point for each unused roll at the end. Get the most
+                total points to win!
             `;
         default:
             return "";

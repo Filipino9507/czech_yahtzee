@@ -94,7 +94,9 @@ export default class GameInstance {
     }
 
     public giveStartingRolls(): void {
-        this.game.players[this.game.playerTurn].rolls += 3;
+        const currentPlayer = this.game.players[this.game.playerTurn];
+        currentPlayer.rolls += 3;
+        currentPlayer.score = calculateTotalScore(currentPlayer);
     }
 
     public rollDice(): void {
@@ -111,6 +113,8 @@ export default class GameInstance {
         const diceValues = this.game.dice.map((d) => d.value);
         const scoreboardData = this.game.players[this.game.playerTurn].scoreboardData;
         peekScores(diceValues, scoreboardData);
+        const currentPlayer = this.game.players[this.game.playerTurn];
+        currentPlayer.score = calculateTotalScore(currentPlayer);
     }
 
     public toggleLockInDice(diceId: number): void {
@@ -126,10 +130,7 @@ export default class GameInstance {
     public endTurn(scoringRuleName: ScoreboardDataKey): boolean {
         const currentPlayer = this.game.players[this.game.playerTurn];
         setScore(scoringRuleName, currentPlayer.scoreboardData);
-        currentPlayer.score = calculateTotalScore(
-            currentPlayer.scoreboardData,
-            currentPlayer.rolls
-        );
+        currentPlayer.score = calculateTotalScore(currentPlayer);
         for (const dice of this.game.dice) {
             dice.rollState = "IDLE";
             dice.value = 1;

@@ -1,5 +1,6 @@
 import { Score, ScoreboardData, ScoreboardDataKey } from "cys/models/game/score";
 import { DiceValue } from "cys/models/game/dice";
+import Player from "cys/models/game/player";
 
 import ScoringRule from "./scoring-rule";
 import MultipleGroupsScoringRule from "./multiple-groups-scoring-rule";
@@ -7,6 +8,7 @@ import PredicateScoringRule from "./predicate-scoring-rule";
 import TriangleScoringRule from "./triangle-scoring-rule";
 import RunScoringRule from "./run-scoring-rule";
 import SingleGroupScoringRule from "./single-group-scoring-rule";
+
 
 const scoringRules: ScoringRule[] = [
     new PredicateScoringRule("ones", (v) => v === 1),
@@ -48,7 +50,7 @@ export const peekScores = (diceValues: DiceValue[], scoreboardData: ScoreboardDa
             score.value = scoringRule.calculateScore(diceValues);
         }
     }
-}
+};
 
 export const setScore = (scoringRuleName: ScoreboardDataKey, scoreboardData: ScoreboardData) => {
     for (const scoringRule of scoringRules) {
@@ -61,10 +63,14 @@ export const setScore = (scoringRuleName: ScoreboardDataKey, scoreboardData: Sco
     clearPeekedScores(scoreboardData);
 };
 
-export const calculateTotalScore = (scoreboardData: ScoreboardData, rolls: number) => {
+export const calculateTotalScore = (player: Player) => {
+    const { scoreboardData, rolls } = player;
     let totalScore = 0;
     for (const scoringRuleName in scoreboardData) {
-        totalScore += scoreboardData[scoringRuleName as ScoreboardDataKey].value;
+        const score = scoreboardData[scoringRuleName as ScoreboardDataKey];
+        if (score.scored) {
+            totalScore += score.value;
+        }
     }
     return totalScore + rolls;
 };
