@@ -55,6 +55,7 @@ export const startGame = createAction<{
 }>(MatchmakerTSA.START_GAME);
 export const removePlayerFromExistingRoom = createAction<{
     roomId: string | null;
+    isHost: boolean;
 }>(MatchmakerTSA.REMOVE_PLAYER_FROM_EXISTING_ROOM);
 export const setPlayerCount = createAction<{
     roomId: string;

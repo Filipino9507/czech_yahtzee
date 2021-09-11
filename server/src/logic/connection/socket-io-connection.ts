@@ -55,8 +55,9 @@ export default class SocketIOConnection {
                 try {
                     this.onAction(socket, action);
                 } catch (error) {
-                    this.onError(socket, error);
+                    this.onError(socket, error as Error);
                 }
+                // console.log("STATE: ", this.ioState);
             });
         });
     }

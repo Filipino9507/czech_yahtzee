@@ -35,12 +35,13 @@ export default class GameInstance {
      * @returns whether this game contains the player
      */
     public reincludePlayer(socket: Socket, playerId: string): boolean {
-        for (const socketId of Array.from(this.playerMap.keys())) {
-            const player = this.playerMap.get(socketId);
+        const newSocketId = socket.id;
+        for (const oldSocketId of Array.from(this.playerMap.keys())) {
+            const player = this.playerMap.get(oldSocketId);
             if (player && player.playerId === playerId) {
                 socket.join(this.game.roomId);
-                this.playerMap.set(socket.id, player);
-                this.playerMap.delete(socketId);
+                this.playerMap.delete(oldSocketId);  // probably unnecessary
+                this.playerMap.set(newSocketId, player);  // probably unnecessary
                 return true;
             }
         }

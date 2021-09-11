@@ -33,6 +33,7 @@ const ScoreboardDataCell: React.FunctionComponent<Props> = ({
     const onFinishTurn = () => dispatch(finishTurn({ roomId, scoringRuleName }));
 
     const canFinishTurn = !scored && playerIdx === cellPlayerIdx && canPlay;
+    const shownValue = scored || canFinishTurn ? value : "-";
     const classes = useStyles();
     return (
         <TableCell align="right" size="small">
@@ -42,10 +43,10 @@ const ScoreboardDataCell: React.FunctionComponent<Props> = ({
                     style={{ textDecoration: "none" }}
                     onClick={onFinishTurn}
                 >
-                    <b>{value}</b>
+                    <b>{shownValue}</b>
                 </Link>
             ) : (
-                value
+                shownValue
             )}
         </TableCell>
     );

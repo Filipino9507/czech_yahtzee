@@ -5,6 +5,7 @@ import { Box, Button, Divider, TextField, Typography } from "@material-ui/core";
 import { useAppDispatch, useAppSelector } from "@app/hooks";
 import {
     addPlayerToExistingRoom,
+    removePlayerFromExistingRoom,
     currentPlayerCountSelector,
     isNonHostWaitingSelector,
     playerCountSelector,
@@ -39,7 +40,7 @@ const MatchmakerJoinExistingGame: React.FunctionComponent<Props> = ({ onGoBack }
 
     const handleCancel = () => {
         if (isNonHostWaiting) {
-            // Send abort to server via Redux
+            dispatch(removePlayerFromExistingRoom({ roomId, isHost: false }))
         }
         onGoBack();
     };
@@ -76,7 +77,7 @@ const MatchmakerJoinExistingGame: React.FunctionComponent<Props> = ({ onGoBack }
             <Typography className={classes.smallMargin} variant="h5">
                 {currentPlayerCount === playerCount
                     ? "Waiting for host..."
-                    : "Waiting for other players to join"}
+                    : "Waiting for other players to join..."}
             </Typography>
             <Typography className={classes.smallMargin} variant="body1">
                 (In game: {currentPlayerCount}/{playerCount})

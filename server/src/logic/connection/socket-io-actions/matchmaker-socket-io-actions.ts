@@ -131,6 +131,15 @@ export default class MatchmakerSocketIOActions extends SocketIOActions {
     private onRemovePlayerFromExistingRoom(socket: Socket, roomId: string) {
         const gameInstance = this.ioState.getGame(roomId);
         gameInstance.removePlayer(socket);
+        socket.emit("action", {
+            type: MatchmakerTCA.PROVIDE_PLAYER_DATA,
+            payload: { playerIdx: null, isHost: false, isWaiting: false },
+        });
+        const { playerCount, currentPlayerCount } = gameInstance;
+        this.ioState.emitToRoom(roomId, {
+            type: MatchmakerTCA.PROVIDE_ROOM_DATA,
+            payload: { roomId, playerCount, currentPlayerCount },
+        });
         this.ioState.emitToRoom(roomId, {
             type: MatchmakerTCA.PROVIDE_IN_GAME_STATUS,
             payload: false,
