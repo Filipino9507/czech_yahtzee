@@ -2,6 +2,7 @@ import { Socket } from "socket.io";
 import DataTransferAction from "cys/models/misc/data-transfer-action";
 import { MatchmakerTSA } from "cys/connection/to-server-actions";
 import { AlertTCA, GameTCA, MatchmakerTCA, MiscTCA } from "cys/connection/to-client-actions";
+import GameStatus from "cys/models/game/game-status";
 import SocketIOActions from "./socket-io-actions";
 import { generateRoomId } from "../id";
 import GameInstance from "@logic/game/game-instance";
@@ -52,8 +53,8 @@ export default class MatchmakerSocketIOActions extends SocketIOActions {
             if (hasPlayer) {
                 logInfo("GAME_RETRIEVED", "Successfully retrieved game.");
                 socket.emit("action", {
-                    type: MatchmakerTCA.PROVIDE_IN_GAME_STATUS,
-                    payload: true,
+                    type: MatchmakerTCA.PROVIDE_GAME_STATUS,
+                    payload: "IN_GAME" as GameStatus,
                 });
                 socket.emit("action", {
                     type: GameTCA.PROVIDE_GAME_STATE,
@@ -77,7 +78,11 @@ export default class MatchmakerSocketIOActions extends SocketIOActions {
         this.ioState.setGame(roomId, gameInstance);
         socket.emit("action", {
             type: MatchmakerTCA.PROVIDE_PLAYER_DATA,
-            payload: { playerIdx, isHost: true, isWaiting: true },
+            payload: { playerIdx, isHost: true },
+        });
+        socket.emit("action", {
+            type: MatchmakerTCA.PROVIDE_GAME_STATUS,
+            payload: "WAITING" as GameStatus
         });
         const { playerCount, currentPlayerCount } = gameInstance;
         this.ioState.emitToRoom(socket, roomId, {
@@ -98,7 +103,11 @@ export default class MatchmakerSocketIOActions extends SocketIOActions {
         const playerIdx = gameInstance.addPlayer(socket, false, userId);
         socket.emit("action", {
             type: MatchmakerTCA.PROVIDE_PLAYER_DATA,
-            payload: { playerIdx, isHost: false, isWaiting: true },
+            payload: { playerIdx, isHost: false },
+        });
+        socket.emit("action", {
+            type: MatchmakerTCA.PROVIDE_GAME_STATUS,
+            payload: "WAITING" as GameStatus
         });
         const { playerCount, currentPlayerCount } = gameInstance;
         this.ioState.emitToRoom(socket, roomId, {
@@ -120,14 +129,15 @@ export default class MatchmakerSocketIOActions extends SocketIOActions {
             });
             return;
         }
+        gameInstance.initializeTurnsUntilEnd();
         gameInstance.giveStartingRolls();
         this.ioState.emitToRoom(socket, roomId, {
             type: GameTCA.PROVIDE_GAME_STATE,
             payload: gameInstance.gameData,
         });
         this.ioState.emitToRoom(socket, roomId, {
-            type: MatchmakerTCA.PROVIDE_IN_GAME_STATUS,
-            payload: true,
+            type: MatchmakerTCA.PROVIDE_GAME_STATUS,
+            payload: "IN_GAME" as GameStatus,
         });
     }
 
@@ -137,7 +147,11 @@ export default class MatchmakerSocketIOActions extends SocketIOActions {
             this.ioState.deleteGame(roomId);
             this.ioState.emitToRoom(socket, roomId, {
                 type: MatchmakerTCA.PROVIDE_PLAYER_DATA,
-                payload: { playerIdx: null, isHost: false, isWaiting: false },
+                payload: { playerIdx: null, isHost: false },
+            });
+            this.ioState.emitToRoom(socket, roomId, {
+                type: MatchmakerTCA.PROVIDE_GAME_STATUS,
+                payload: "IDLE" as GameStatus
             });
             this.ioState.emitToRoom(
                 socket,
@@ -148,21 +162,26 @@ export default class MatchmakerSocketIOActions extends SocketIOActions {
                 },
                 false
             );
+            return;
         }
         gameInstance.removePlayer(socket);
         socket.emit("action", {
             type: MatchmakerTCA.PROVIDE_PLAYER_DATA,
-            payload: { playerIdx: null, isHost: false, isWaiting: false },
+            payload: { playerIdx: null, isHost: false },
         });
+        socket.emit("action", {
+            type: MatchmakerTCA.PROVIDE_GAME_STATUS,
+            payload: "IDLE" as GameStatus,
+        })
         const { playerCount, currentPlayerCount } = gameInstance;
         this.ioState.emitToRoom(socket, roomId, {
             type: MatchmakerTCA.PROVIDE_ROOM_DATA,
             payload: { roomId, playerCount, currentPlayerCount },
         });
-        this.ioState.emitToRoom(socket, roomId, {
-            type: MatchmakerTCA.PROVIDE_IN_GAME_STATUS,
-            payload: false,
-        });
+        // this.ioState.emitToRoom(socket, roomId, {
+        //     type: MatchmakerTCA.PROVIDE_IN_GAME_STATUS,
+        //     payload: false,
+        // });
         /**
          * Later will emit to the only player,
          * but first need to figure out what will happen

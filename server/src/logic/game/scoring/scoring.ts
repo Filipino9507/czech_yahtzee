@@ -61,10 +61,10 @@ export const setScore = (scoringRuleName: ScoreboardDataKey, scoreboardData: Sco
     clearPeekedScores(scoreboardData);
 };
 
-export const calculateTotalScore = (scoreboardData: ScoreboardData) => {
+export const calculateTotalScore = (scoreboardData: ScoreboardData, rolls: number) => {
     let totalScore = 0;
     for (const scoringRuleName in scoreboardData) {
         totalScore += scoreboardData[scoringRuleName as ScoreboardDataKey].value;
     }
-    return totalScore;
+    return totalScore + rolls;
 };

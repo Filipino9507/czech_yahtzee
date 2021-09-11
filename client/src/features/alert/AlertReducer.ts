@@ -6,14 +6,14 @@ import { RootState } from "@app/store";
  */
 export interface AlertState {
     isOpen: boolean;
-    title: string | null;
-    contentText: string | null;
+    title: string;
+    contentText: string;
 }
 
 const initialState: AlertState = {
     isOpen: false,
-    title: null,
-    contentText: null,
+    title: "",
+    contentText: "",
 };
 
 /**
@@ -32,8 +32,8 @@ const AlertSlice = createSlice({
     reducers: {
         closeAlert(state: AlertState) {
             state.isOpen = false;
-            state.title = null;
-            state.contentText = null;
+            state.title = "";
+            state.contentText = "";
         },
         // To-client socket.io actions
         displayAlert(state: AlertState, action: PayloadAction<{

@@ -44,8 +44,7 @@ export const getDefaultScorebordData = (): ScoreboardData => {
         run: getDefaultScore(),
         poker: getDefaultScore(),
         general: getDefaultScore(),
-    }
+    };
 };
 
-
-
+export const SCORING_RULE_COUNT = Object.keys(getDefaultScorebordData()).length;

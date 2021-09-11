@@ -27,9 +27,10 @@ const Alert: React.FunctionComponent = () => {
     return (
         <Dialog open={isOpen} onClose={handleClose}>
             <DialogTitle>{title}</DialogTitle>
+            {contentText.length > 0 &&
             <DialogContent>
                 <DialogContentText>{contentText}</DialogContentText>
-            </DialogContent>
+            </DialogContent>}
             <DialogActions>
                 <Button onClick={handleClose} variant="text" color="primary">
                     OK

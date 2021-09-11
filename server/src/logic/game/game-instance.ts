@@ -1,7 +1,7 @@
 import { Socket } from "socket.io";
 import Game, { getDefaultGame } from "cys/models/game/game";
 import { DiceValue } from "cys/models/game/dice";
-import { ScoreboardDataKey } from "cys/models/game/score";
+import { ScoreboardDataKey, SCORING_RULE_COUNT } from "cys/models/game/score";
 import Player, { getDefaultPlayer } from "cys/models/game/player";
 import { generatePlayerId } from "@logic/connection/id";
 import { peekScores, setScore, calculateTotalScore } from "./scoring/scoring";
@@ -11,6 +11,7 @@ export default class GameInstance {
     private playerMap: Map<string, Player>;
     private game: Game;
     private hostSocketId: string | null;
+    private turnsUntilEnd: number;
 
     public get gameData(): Game {
         return JSON.parse(JSON.stringify(this.game));
@@ -32,6 +33,11 @@ export default class GameInstance {
         this.game = getDefaultGame(roomId);
         this.playerMap = new Map();
         this.hostSocketId = null;
+        this.turnsUntilEnd = 0;
+    }
+
+    public initializeTurnsUntilEnd(): void {
+        this.turnsUntilEnd = this.game.players.length * SCORING_RULE_COUNT;
     }
 
     /**
@@ -112,15 +118,27 @@ export default class GameInstance {
         dice.rollState = dice.rollState === "LOCKED_IN" ? "IDLE" : "LOCKED_IN";
     }
 
-    public endTurn(scoringRuleName: ScoreboardDataKey): void {
+    /**
+     *
+     * @param scoringRuleName Scoreboard data key determining what scoring rule was chosen
+     * @returns whether or not game is over
+     */
+    public endTurn(scoringRuleName: ScoreboardDataKey): boolean {
         const currentPlayer = this.game.players[this.game.playerTurn];
         setScore(scoringRuleName, currentPlayer.scoreboardData);
-        currentPlayer.score = calculateTotalScore(currentPlayer.scoreboardData);
+        currentPlayer.score = calculateTotalScore(
+            currentPlayer.scoreboardData,
+            currentPlayer.rolls
+        );
         for (const dice of this.game.dice) {
             dice.rollState = "IDLE";
             dice.value = 1;
         }
         this.game.playerTurn = (this.game.playerTurn + 1) % this.game.playerCount;
+        if (--this.turnsUntilEnd === 0) {
+            return true;
+        }
         this.giveStartingRolls();
+        return false;
     }
 }

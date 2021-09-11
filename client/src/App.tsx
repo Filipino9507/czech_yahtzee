@@ -3,19 +3,31 @@ import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import Navigation from "@features/navigation/Navigation";
 import Game from "@features/game/Game";
 import Matchmaker from "@features/matchmaker/Matchmaker";
+import Results from "@features/results/Results";
 import Alert from "@features/alert/Alert";
 
 import { useAppSelector } from "@app/hooks";
-import { inGameSelector } from "@features/matchmaker/MatchmakerReducer";
-
+import { gameStatusSelector } from "@features/matchmaker/MatchmakerReducer";
 
 const App: React.FunctionComponent = () => {
-    const inGame = useAppSelector(inGameSelector);
-    
+    const gameStatus = useAppSelector(gameStatusSelector);
+
     /**
      * @test
      */
     // const inGame = true;
+
+    const renderGameStatusScreen = () => {
+        switch (gameStatus) {
+            case "IDLE":
+            case "WAITING":
+                return <Matchmaker />;
+            case "IN_GAME":
+                return <Game />;
+            case "IN_RESULTS":
+                return <Results />;
+        }
+    };
 
     return (
         <React.Fragment>
@@ -23,7 +35,7 @@ const App: React.FunctionComponent = () => {
                 <Navigation />
                 <Switch>
                     <Route exact path="/game">
-                        {inGame ? <Game /> : <Matchmaker />}
+                        {renderGameStatusScreen()}
                     </Route>
                     <Route path="/">
                         <Redirect to="/game" />

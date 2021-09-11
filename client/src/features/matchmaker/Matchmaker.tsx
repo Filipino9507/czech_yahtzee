@@ -8,11 +8,11 @@ const useStyles = makeStyles((theme) => ({
     button: {
         margin: theme.spacing(1),
     },
-    root: {
+    rootContainer: {
         width: "100%",
         height: "100vh",
     },
-    rootContainer: {
+    root: {
         padding: theme.spacing(4),
     },
 }));
@@ -39,9 +39,9 @@ const Matchmaker: React.FunctionComponent = () => {
 
     const classes = useStyles();
     return (
-        <Card className={classes.root}>
+        <Card className={classes.rootContainer}>
             <Box
-                className={classes.rootContainer}
+                className={classes.root}
                 width="100%"
                 height="100%"
                 justifyContent="center"

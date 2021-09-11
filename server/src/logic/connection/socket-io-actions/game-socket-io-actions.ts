@@ -1,9 +1,10 @@
 import { Socket } from "socket.io";
 import DataTransferAction from "cys/models/misc/data-transfer-action";
 import { GameTSA } from "cys/connection/to-server-actions";
-import { GameTCA } from "cys/connection/to-client-actions";
+import { GameTCA, MatchmakerTCA } from "cys/connection/to-client-actions";
 import { ScoreboardDataKey } from "cys/models/game/score";
 import SocketIOActions from "./socket-io-actions";
+import GameStatus from "cys/models/game/game-status";
 
 export default class GameSocketIOActions extends SocketIOActions {
     public override onAction(socket: Socket, action: DataTransferAction): boolean {
@@ -48,7 +49,13 @@ export default class GameSocketIOActions extends SocketIOActions {
 
     private onFinishTurn(socket: Socket, roomId: string, scoringRuleName: ScoreboardDataKey) {
         const gameInstance = this.ioState.getGame(roomId);
-        gameInstance.endTurn(scoringRuleName);
+        if (gameInstance.endTurn(scoringRuleName)) {
+            this.ioState.emitToRoom(socket, roomId, {
+                type: MatchmakerTCA.PROVIDE_GAME_STATUS,
+                payload: "IN_RESULTS" as GameStatus,
+            });
+            this.ioState.deleteGame(roomId);
+        }
         this.ioState.emitToRoom(socket, roomId, {
             type: GameTCA.PROVIDE_GAME_STATE,
             payload: gameInstance.gameData,

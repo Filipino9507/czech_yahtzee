@@ -1,13 +1,13 @@
 import { createSlice, createAction, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "@app/store";
 import { MatchmakerTSA } from "cys/connection/to-server-actions";
+import GameStatus from "cys/models/game/game-status";
 
 /**
  * State
  */
 export interface MatchmakerState {
-    inGame: boolean;
-    isWaiting: boolean;
+    gameStatus: GameStatus;
     isHost: boolean;
     roomId: string | null;
     playerCount: number;
@@ -16,8 +16,7 @@ export interface MatchmakerState {
 }
 
 const initialState: MatchmakerState = {
-    inGame: false,
-    isWaiting: false,
+    gameStatus: "IDLE",
     isHost: false,
     roomId: null,
     playerCount: 0,
@@ -30,11 +29,11 @@ const initialState: MatchmakerState = {
  */
 export const roomIdSelector = (state: RootState) => state.matchmaker.roomId;
 export const playerIdxSelector = (state: RootState) => state.matchmaker.playerIdx;
-export const inGameSelector = (state: RootState) => state.matchmaker.inGame;
+export const gameStatusSelector = (state: RootState) => state.matchmaker.gameStatus;
 export const playerCountSelector = (state: RootState) => state.matchmaker.playerCount;
 export const currentPlayerCountSelector = (state: RootState) => state.matchmaker.currentPlayerCount;
 export const isNonHostWaitingSelector = (state: RootState) =>
-    !state.matchmaker.isHost && state.matchmaker.isWaiting;
+    !state.matchmaker.isHost && state.matchmaker.gameStatus === "WAITING";
 
 /**
  * Actions
@@ -68,6 +67,9 @@ const MatchmakerSlice = createSlice({
     name: "matchmaker",
     initialState,
     reducers: {
+        setGameStatusIdle(state: MatchmakerState) {
+            state.gameStatus = "IDLE";
+        },
         // To-client socket.io actions
         provideRoomData(
             state: MatchmakerState,
@@ -87,20 +89,14 @@ const MatchmakerSlice = createSlice({
             action: PayloadAction<{
                 playerIdx: number;
                 isHost: boolean;
-                isWaiting: boolean;
             }>
         ) {
-            const { playerIdx, isHost, isWaiting } = action.payload;
+            const { playerIdx, isHost } = action.payload;
             state.playerIdx = playerIdx;
             state.isHost = isHost;
-            state.isWaiting = isWaiting;
         },
-        provideInGameStatus(state: MatchmakerState, action: PayloadAction<boolean>) {
-            const inGame = action.payload;
-            state.inGame = inGame;
-            if (inGame) {
-                state.isWaiting = false;
-            }
+        provideGameStatus(state: MatchmakerState, action: PayloadAction<GameStatus>) {
+            state.gameStatus = action.payload;
         },
         error(state: MatchmakerState, action: PayloadAction<string>) {
             const errorMessage = action.payload;
@@ -110,4 +106,5 @@ const MatchmakerSlice = createSlice({
     extraReducers: {},
 });
 
+export const { setGameStatusIdle } = MatchmakerSlice.actions;
 export default MatchmakerSlice.reducer;
