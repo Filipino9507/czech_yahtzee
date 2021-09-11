@@ -3,6 +3,7 @@ import createSocketIoMiddleware from "redux-socket.io";
 import io from "socket.io-client";
 import GameReducer from "@features/game/GameReducer";
 import MatchmakerReducer from "@features/matchmaker/MatchmakerReducer";
+import AlertReducer from "@features/alert/AlertReducer";
 
 const socket = io("http://localhost:3000");
 const socketIoMiddleware = createSocketIoMiddleware(socket, "server/");
@@ -29,6 +30,7 @@ export const store = configureStore({
     reducer: {
         game: GameReducer,
         matchmaker: MatchmakerReducer,
+        alert: AlertReducer,
     },
     preloadedState: getPreloadedState(),
     middleware: (getDefaultMiddleware) =>

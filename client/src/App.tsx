@@ -3,9 +3,11 @@ import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import Navigation from "@features/navigation/Navigation";
 import Game from "@features/game/Game";
 import Matchmaker from "@features/matchmaker/Matchmaker";
+import Alert from "@features/alert/Alert";
 
 import { useAppSelector } from "@app/hooks";
 import { inGameSelector } from "@features/matchmaker/MatchmakerReducer";
+
 
 const App: React.FunctionComponent = () => {
     const inGame = useAppSelector(inGameSelector);
@@ -28,6 +30,7 @@ const App: React.FunctionComponent = () => {
                     </Route>
                 </Switch>
             </BrowserRouter>
+            <Alert />
         </React.Fragment>
     );
 };

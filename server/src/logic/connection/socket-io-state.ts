@@ -20,7 +20,7 @@ export default class SocketIOState {
         this.roomMap = roomMap;
     }
 
-    // public emitToRoom2(roomId: string, action: DataTransferAction): boolean {
+    // public emitToRoom(roomId: string, action: DataTransferAction): boolean {
     //     const room = this.roomMap.get(roomId);
     //     if (!room) {
     //         return false;

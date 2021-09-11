@@ -1,7 +1,7 @@
 import { Socket } from "socket.io";
 import DataTransferAction from "cys/models/misc/data-transfer-action";
 import { MatchmakerTSA } from "cys/connection/to-server-actions";
-import { GameTCA, MatchmakerTCA, MiscTCA } from "cys/connection/to-client-actions";
+import { AlertTCA, GameTCA, MatchmakerTCA, MiscTCA } from "cys/connection/to-client-actions";
 import SocketIOActions from "./socket-io-actions";
 import { generateRoomId } from "../id";
 import GameInstance from "@logic/game/game-instance";
@@ -90,8 +90,8 @@ export default class MatchmakerSocketIOActions extends SocketIOActions {
         const gameInstance = this.ioState.getGame(roomId);
         if (gameInstance.currentPlayerCount === gameInstance.playerCount) {
             socket.emit("action", {
-                type: MatchmakerTCA.ERROR,
-                payload: "The game is full!"
+                type: AlertTCA.DISPLAY_ALERT,
+                payload: { title: "The game is full!", contentText: "" },
             });
             return;
         }
@@ -112,8 +112,11 @@ export default class MatchmakerSocketIOActions extends SocketIOActions {
         const { currentPlayerCount, playerCount } = gameInstance;
         if (currentPlayerCount !== playerCount) {
             socket.emit("action", {
-                type: MatchmakerTCA.ERROR,
-                payload: `Need to have ${playerCount} players, but only ${currentPlayerCount} are present.`,
+                type: AlertTCA.DISPLAY_ALERT,
+                payload: {
+                    title: "Error",
+                    contentText: `Need to have ${playerCount} players, but only ${currentPlayerCount} are present.`,
+                },
             });
             return;
         }
@@ -136,6 +139,15 @@ export default class MatchmakerSocketIOActions extends SocketIOActions {
                 type: MatchmakerTCA.PROVIDE_PLAYER_DATA,
                 payload: { playerIdx: null, isHost: false, isWaiting: false },
             });
+            this.ioState.emitToRoom(
+                socket,
+                roomId,
+                {
+                    type: AlertTCA.DISPLAY_ALERT,
+                    payload: { title: "Host has disconnected", contentText: "" },
+                },
+                false
+            );
         }
         gameInstance.removePlayer(socket);
         socket.emit("action", {

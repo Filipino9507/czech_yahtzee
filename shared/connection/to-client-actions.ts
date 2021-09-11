@@ -21,6 +21,12 @@ export namespace GameTCA {
     export const ERROR = BASE + "error";
 }
 
+export namespace AlertTCA {
+    const BASE = "alert/";
+
+    export const DISPLAY_ALERT = BASE + "displayAlert";
+}
+
 export namespace MiscTCA {
     const BASE = "misc/";
 
