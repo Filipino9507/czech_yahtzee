@@ -20,18 +20,30 @@ export default class SocketIOState {
         this.roomMap = roomMap;
     }
 
-    public emitToRoom(roomId: string, action: DataTransferAction): boolean {
-        const room = this.roomMap.get(roomId);
-        if (!room) {
-            return false;
+    // public emitToRoom2(roomId: string, action: DataTransferAction): boolean {
+    //     const room = this.roomMap.get(roomId);
+    //     if (!room) {
+    //         return false;
+    //     }
+    //     room.forEach((socketId) => {
+    //         const socket = this.sockets.find((socket) => socket.id === socketId);
+    //         if (socket) {
+    //             socket.emit("action", action);
+    //         }
+    //     });
+    //     return true;
+    // }
+
+    public emitToRoom(
+        socket: Socket,
+        roomId: string,
+        action: DataTransferAction,
+        includeSender: boolean = true
+    ): void {
+        if (includeSender) {
+            socket.emit("action", action);
         }
-        room.forEach((socketId) => {
-            const socket = this.sockets.find((socket) => socket.id === socketId);
-            if (socket) {
-                socket.emit("action", action);
-            }
-        });
-        return true;
+        socket.broadcast.to(roomId).emit("action", action);
     }
 
     public connect(socket: Socket): void {
@@ -75,6 +87,10 @@ export default class SocketIOState {
             );
         }
         this.gameMap.set(roomId, game);
+    }
+
+    public deleteGame(roomId: string): void {
+        this.gameMap.delete(roomId);
     }
 
     /**

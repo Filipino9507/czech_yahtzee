@@ -30,7 +30,7 @@ const MatchmakerCreateNewGame: React.FunctionComponent<Props> = ({ onGoBack }: P
     }, []);
 
     const handleCancel = () => {
-        dispatch(removePlayerFromExistingRoom({ roomId, isHost: true }));
+        dispatch(removePlayerFromExistingRoom({ roomId }));
         onGoBack();
     };
     const handleSetPlayerCount = (_: React.MouseEvent, newPlayerCount: number) =>

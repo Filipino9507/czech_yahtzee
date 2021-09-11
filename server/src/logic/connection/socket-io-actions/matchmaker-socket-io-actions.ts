@@ -73,14 +73,14 @@ export default class MatchmakerSocketIOActions extends SocketIOActions {
     private onAddPlayerToNewRoom(socket: Socket, userId?: string) {
         const roomId = generateRoomId(this.ioState);
         const gameInstance = new GameInstance(roomId);
-        const playerIdx = gameInstance.addPlayer(socket, userId);
+        const playerIdx = gameInstance.addPlayer(socket, true, userId);
         this.ioState.setGame(roomId, gameInstance);
         socket.emit("action", {
             type: MatchmakerTCA.PROVIDE_PLAYER_DATA,
             payload: { playerIdx, isHost: true, isWaiting: true },
         });
         const { playerCount, currentPlayerCount } = gameInstance;
-        this.ioState.emitToRoom(roomId, {
+        this.ioState.emitToRoom(socket, roomId, {
             type: MatchmakerTCA.PROVIDE_ROOM_DATA,
             payload: { roomId, playerCount, currentPlayerCount },
         });
@@ -95,13 +95,13 @@ export default class MatchmakerSocketIOActions extends SocketIOActions {
             });
             return;
         }
-        const playerIdx = gameInstance.addPlayer(socket, userId);
+        const playerIdx = gameInstance.addPlayer(socket, false, userId);
         socket.emit("action", {
             type: MatchmakerTCA.PROVIDE_PLAYER_DATA,
             payload: { playerIdx, isHost: false, isWaiting: true },
         });
         const { playerCount, currentPlayerCount } = gameInstance;
-        this.ioState.emitToRoom(roomId, {
+        this.ioState.emitToRoom(socket, roomId, {
             type: MatchmakerTCA.PROVIDE_ROOM_DATA,
             payload: { roomId, playerCount, currentPlayerCount },
         });
@@ -118,11 +118,11 @@ export default class MatchmakerSocketIOActions extends SocketIOActions {
             return;
         }
         gameInstance.giveStartingRolls();
-        this.ioState.emitToRoom(roomId, {
+        this.ioState.emitToRoom(socket, roomId, {
             type: GameTCA.PROVIDE_GAME_STATE,
             payload: gameInstance.gameData,
         });
-        this.ioState.emitToRoom(roomId, {
+        this.ioState.emitToRoom(socket, roomId, {
             type: MatchmakerTCA.PROVIDE_IN_GAME_STATUS,
             payload: true,
         });
@@ -130,17 +130,24 @@ export default class MatchmakerSocketIOActions extends SocketIOActions {
 
     private onRemovePlayerFromExistingRoom(socket: Socket, roomId: string) {
         const gameInstance = this.ioState.getGame(roomId);
+        if (gameInstance.isHostSocket(socket)) {
+            this.ioState.deleteGame(roomId);
+            this.ioState.emitToRoom(socket, roomId, {
+                type: MatchmakerTCA.PROVIDE_PLAYER_DATA,
+                payload: { playerIdx: null, isHost: false, isWaiting: false },
+            });
+        }
         gameInstance.removePlayer(socket);
         socket.emit("action", {
             type: MatchmakerTCA.PROVIDE_PLAYER_DATA,
             payload: { playerIdx: null, isHost: false, isWaiting: false },
         });
         const { playerCount, currentPlayerCount } = gameInstance;
-        this.ioState.emitToRoom(roomId, {
+        this.ioState.emitToRoom(socket, roomId, {
             type: MatchmakerTCA.PROVIDE_ROOM_DATA,
             payload: { roomId, playerCount, currentPlayerCount },
         });
-        this.ioState.emitToRoom(roomId, {
+        this.ioState.emitToRoom(socket, roomId, {
             type: MatchmakerTCA.PROVIDE_IN_GAME_STATUS,
             payload: false,
         });
@@ -160,7 +167,7 @@ export default class MatchmakerSocketIOActions extends SocketIOActions {
     private onSetPlayerCount(socket: Socket, roomId: string, newPlayerCount: number) {
         const gameInstance = this.ioState.getGame(roomId);
         gameInstance.playerCount = newPlayerCount;
-        this.ioState.emitToRoom(roomId, {
+        this.ioState.emitToRoom(socket, roomId, {
             type: MatchmakerTCA.PROVIDE_ROOM_DATA,
             payload: {
                 roomId,

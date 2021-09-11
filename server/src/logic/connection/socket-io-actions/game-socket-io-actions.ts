@@ -10,17 +10,17 @@ export default class GameSocketIOActions extends SocketIOActions {
         switch (action.type) {
             case GameTSA.ROLL_DICE: {
                 const { roomId } = action.payload;
-                this.onRollDice(roomId);
+                this.onRollDice(socket, roomId);
                 return true;
             }
             case GameTSA.TOGGLE_LOCK_IN_DICE: {
                 const { roomId, diceId } = action.payload;
-                this.onToggleLockInDice(roomId, diceId);
+                this.onToggleLockInDice(socket, roomId, diceId);
                 return true;
             }
             case GameTSA.FINISH_TURN: {
                 const { roomId, scoringRuleName } = action.payload;
-                this.onFinishTurn(roomId, scoringRuleName);
+                this.onFinishTurn(socket, roomId, scoringRuleName);
                 return true;
             }
             default:
@@ -28,28 +28,28 @@ export default class GameSocketIOActions extends SocketIOActions {
         }
     }
 
-    private onRollDice(roomId: string) {
+    private onRollDice(socket: Socket, roomId: string) {
         const gameInstance = this.ioState.getGame(roomId);
         gameInstance.rollDice();
-        this.ioState.emitToRoom(roomId, {
+        this.ioState.emitToRoom(socket, roomId, {
             type: GameTCA.PROVIDE_GAME_STATE,
             payload: gameInstance.gameData,
         });
     }
 
-    private onToggleLockInDice(roomId: string, diceId: number) {
+    private onToggleLockInDice(socket: Socket, roomId: string, diceId: number) {
         const gameInstance = this.ioState.getGame(roomId);
         gameInstance.toggleLockInDice(diceId);
-        this.ioState.emitToRoom(roomId, {
+        this.ioState.emitToRoom(socket, roomId, {
             type: GameTCA.PROVIDE_GAME_STATE,
             payload: gameInstance.gameData,
         });
     }
 
-    private onFinishTurn(roomId: string, scoringRuleName: ScoreboardDataKey) {
+    private onFinishTurn(socket: Socket, roomId: string, scoringRuleName: ScoreboardDataKey) {
         const gameInstance = this.ioState.getGame(roomId);
         gameInstance.endTurn(scoringRuleName);
-        this.ioState.emitToRoom(roomId, {
+        this.ioState.emitToRoom(socket, roomId, {
             type: GameTCA.PROVIDE_GAME_STATE,
             payload: gameInstance.gameData,
         });

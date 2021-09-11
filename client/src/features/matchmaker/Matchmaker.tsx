@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Button, Card, makeStyles } from "@material-ui/core";
+import { Box, Card, makeStyles } from "@material-ui/core";
 import MatchmakerIdle from "./components/MatchmakerIdle";
 import MatchmakerCreateNewGame from "./components/MatchmakerCreateNewGame";
 import MatchmakerJoinExistingGame from "./components/MatchmakerJoinExistingGame.tsx";

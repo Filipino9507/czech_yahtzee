@@ -39,9 +39,7 @@ const MatchmakerJoinExistingGame: React.FunctionComponent<Props> = ({ onGoBack }
     };
 
     const handleCancel = () => {
-        if (isNonHostWaiting) {
-            dispatch(removePlayerFromExistingRoom({ roomId, isHost: false }))
-        }
+        dispatch(removePlayerFromExistingRoom({ roomId }))
         onGoBack();
     };
 

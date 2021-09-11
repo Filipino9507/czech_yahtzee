@@ -9,8 +9,9 @@ import { peekScores, setScore, calculateTotalScore } from "./scoring/scoring";
 export default class GameInstance {
     // socketId -> Player
     private playerMap: Map<string, Player>;
-
     private game: Game;
+    private hostSocketId: string | null;
+
     public get gameData(): Game {
         return JSON.parse(JSON.stringify(this.game));
     }
@@ -23,10 +24,14 @@ export default class GameInstance {
     public set playerCount(value: number) {
         this.game.playerCount = value;
     }
+    public isHostSocket(socket: Socket): boolean {
+        return this.hostSocketId === socket.id;
+    }
 
     public constructor(roomId: string) {
         this.game = getDefaultGame(roomId);
         this.playerMap = new Map();
+        this.hostSocketId = null;
     }
 
     /**
@@ -40,8 +45,11 @@ export default class GameInstance {
             const player = this.playerMap.get(oldSocketId);
             if (player && player.playerId === playerId) {
                 socket.join(this.game.roomId);
-                this.playerMap.delete(oldSocketId);  // probably unnecessary
-                this.playerMap.set(newSocketId, player);  // probably unnecessary
+                this.playerMap.delete(oldSocketId);
+                this.playerMap.set(newSocketId, player);
+                if (this.hostSocketId === oldSocketId) {
+                    this.hostSocketId = newSocketId;
+                }
                 return true;
             }
         }
@@ -56,13 +64,16 @@ export default class GameInstance {
      * @param userId potential userId if the player is not a guest
      * @returns index of the player for determining order
      */
-    public addPlayer(socket: Socket, userId?: string): number {
+    public addPlayer(socket: Socket, isHost: boolean, userId?: string): number {
         socket.join(this.game.roomId);
         const playerId = generatePlayerId(this.playerMap);
         const displayedName = userId === undefined ? `Guest_${playerId}` : `User_${userId}`;
         const player = getDefaultPlayer(displayedName, playerId, userId);
         this.playerMap.set(socket.id, player);
         this.game.players.push(player);
+        if (isHost) {
+            this.hostSocketId = socket.id;
+        }
         return this.game.players.length - 1;
     }
 
