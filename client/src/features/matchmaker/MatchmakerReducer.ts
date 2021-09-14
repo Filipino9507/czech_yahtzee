@@ -10,6 +10,7 @@ export interface MatchmakerState {
     gameStatus: GameStatus;
     isHost: boolean;
     roomId: string | null;
+    playerId: string | null;
     playerCount: number;
     currentPlayerCount: number;
     playerIdx: number | null;
@@ -19,6 +20,7 @@ const initialState: MatchmakerState = {
     gameStatus: "IDLE",
     isHost: false,
     roomId: null,
+    playerId: null,
     playerCount: 0,
     currentPlayerCount: 0,
     playerIdx: null,
@@ -28,12 +30,12 @@ const initialState: MatchmakerState = {
  * Selectors
  */
 export const roomIdSelector = (state: RootState) => state.matchmaker.roomId;
+export const playerIdSelector = (state: RootState) => state.matchmaker.playerId;
 export const playerIdxSelector = (state: RootState) => state.matchmaker.playerIdx;
 export const gameStatusSelector = (state: RootState) => state.matchmaker.gameStatus;
 export const playerCountSelector = (state: RootState) => state.matchmaker.playerCount;
 export const currentPlayerCountSelector = (state: RootState) => state.matchmaker.currentPlayerCount;
-export const isNonHostWaitingSelector = (state: RootState) =>
-    !state.matchmaker.isHost && state.matchmaker.gameStatus === "WAITING";
+export const isHostSelector = (state: RootState) => state.matchmaker.isHost;
 
 /**
  * Actions
@@ -74,7 +76,7 @@ const MatchmakerSlice = createSlice({
         provideRoomData(
             state: MatchmakerState,
             action: PayloadAction<{
-                roomId: string;
+                roomId: string | null;
                 playerCount: number;
                 currentPlayerCount: number;
             }>
@@ -88,11 +90,13 @@ const MatchmakerSlice = createSlice({
             state: MatchmakerState,
             action: PayloadAction<{
                 playerIdx: number;
+                playerId: string | null;
                 isHost: boolean;
             }>
         ) {
-            const { playerIdx, isHost } = action.payload;
+            const { playerIdx, playerId, isHost } = action.payload;
             state.playerIdx = playerIdx;
+            state.playerId = playerId;
             state.isHost = isHost;
         },
         provideGameStatus(state: MatchmakerState, action: PayloadAction<GameStatus>) {

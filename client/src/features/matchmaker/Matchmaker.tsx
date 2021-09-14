@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Card, makeStyles } from "@material-ui/core";
 import MatchmakerIdle from "./components/MatchmakerIdle";
 import MatchmakerCreateNewGame from "./components/MatchmakerCreateNewGame";
 import MatchmakerJoinExistingGame from "./components/MatchmakerJoinExistingGame.tsx";
+
+import { useAppSelector } from "@app/hooks";
+import { isHostSelector, gameStatusSelector } from "./MatchmakerReducer";
 
 const useStyles = makeStyles((theme) => ({
     button: {
@@ -36,6 +39,14 @@ const Matchmaker: React.FunctionComponent = () => {
                 return <MatchmakerJoinExistingGame onGoBack={() => setMatchmakerState("IDLE")} />;
         }
     };
+
+    const isHost = useAppSelector(isHostSelector);
+    const gameStatus = useAppSelector(gameStatusSelector);
+    useEffect(() => {
+        if (gameStatus === "WAITING") {
+            setMatchmakerState(isHost ? "CREATE_NEW_GAME" : "JOIN_EXISTING_GAME");
+        }
+    }, []);
 
     const classes = useStyles();
     return (

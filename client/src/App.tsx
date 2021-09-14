@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import Navigation from "@features/navigation/Navigation";
 import Game from "@features/game/Game";
@@ -6,16 +6,32 @@ import Matchmaker from "@features/matchmaker/Matchmaker";
 import Results from "@features/results/Results";
 import Alert from "@features/alert/Alert";
 
-import { useAppSelector } from "@app/hooks";
-import { gameStatusSelector } from "@features/matchmaker/MatchmakerReducer";
+import { useAppDispatch, useAppSelector } from "@app/hooks";
+import {
+    gameStatusSelector,
+    playerIdSelector,
+    requestStoredGame,
+    roomIdSelector,
+} from "@features/matchmaker/MatchmakerReducer";
 
 const App: React.FunctionComponent = () => {
     const gameStatus = useAppSelector(gameStatusSelector);
 
-    /**
-     * @test
-     */
-    // const inGame = true;
+    const storedPlayerId = useAppSelector(playerIdSelector);
+    const storedRoomId = useAppSelector(roomIdSelector);
+
+    const dispatch = useAppDispatch();
+    useEffect(() => {
+        if (storedRoomId === null || storedPlayerId === null) {
+            return;
+        }
+        dispatch(
+            requestStoredGame({
+                roomId: storedRoomId,
+                playerId: storedPlayerId,
+            })
+        );
+    }, []);
 
     const renderGameStatusScreen = () => {
         switch (gameStatus) {

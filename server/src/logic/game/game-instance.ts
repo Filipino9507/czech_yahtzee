@@ -1,10 +1,12 @@
 import { Socket } from "socket.io";
 import Game, { getDefaultGame } from "cys/models/game/game";
 import { DiceValue } from "cys/models/game/dice";
+import GameStatus from "cys/models/game/game-status";
 import { ScoreboardDataKey, SCORING_RULE_COUNT } from "cys/models/game/score";
 import Player, { getDefaultPlayer } from "cys/models/game/player";
 import { generatePlayerId } from "@logic/connection/id";
 import { peekScores, setScore, calculateTotalScore } from "./scoring/scoring";
+
 
 export default class GameInstance {
     // socketId -> Player
@@ -12,6 +14,7 @@ export default class GameInstance {
     private game: Game;
     private hostSocketId: string | null;
     private turnsUntilEnd: number;
+    public status: Exclude<GameStatus, "IDLE">;
 
     public get gameData(): Game {
         return JSON.parse(JSON.stringify(this.game));
@@ -34,6 +37,7 @@ export default class GameInstance {
         this.playerMap = new Map();
         this.hostSocketId = null;
         this.turnsUntilEnd = 0;
+        this.status = "WAITING";
     }
 
     public initializeTurnsUntilEnd(): void {
@@ -65,12 +69,11 @@ export default class GameInstance {
     /**
      *
      * @param socket socket of the player to add
-     * @param playerId if the player reloaded the page, this allows
-     * the server to identify them
+     * @param isHost whether or not the player is the room host
      * @param userId potential userId if the player is not a guest
-     * @returns index of the player for determining order
+     * @returns index of the player for determining order and playerId
      */
-    public addPlayer(socket: Socket, isHost: boolean, userId?: string): number {
+    public addPlayer(socket: Socket, isHost: boolean, userId?: string): [number, string] {
         socket.join(this.game.roomId);
         const playerId = generatePlayerId(this.playerMap);
         const displayedName = userId === undefined ? `Guest_${playerId}` : `User_${userId}`;
@@ -80,7 +83,7 @@ export default class GameInstance {
         if (isHost) {
             this.hostSocketId = socket.id;
         }
-        return this.game.players.length - 1;
+        return [this.game.players.length - 1, playerId];
     }
 
     public removePlayer(socket: Socket): void {

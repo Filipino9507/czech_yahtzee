@@ -50,6 +50,7 @@ export default class GameSocketIOActions extends SocketIOActions {
     private onFinishTurn(socket: Socket, roomId: string, scoringRuleName: ScoreboardDataKey) {
         const gameInstance = this.ioState.getGame(roomId);
         if (gameInstance.endTurn(scoringRuleName)) {
+            gameInstance.status = "IN_RESULTS";
             this.ioState.emitToRoom(socket, roomId, {
                 type: MatchmakerTCA.PROVIDE_GAME_STATUS,
                 payload: "IN_RESULTS" as GameStatus,

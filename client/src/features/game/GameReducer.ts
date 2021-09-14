@@ -1,9 +1,10 @@
 import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "@app/store";
 import Game from "cys/models/game/game";
-import { DiceRollState } from "cys/models/game/dice";
+import Dice, { DiceRollState } from "cys/models/game/dice";
 import { GameTSA } from "cys/connection/to-server-actions";
 import { ScoreboardDataKey } from "cys/models/game/score";
+import Player from "cys/models/game/player";
 
 /**
  * State
@@ -31,7 +32,7 @@ const initialState: GameState = {
  */
 export const diceSelector =
     (options: { rollState?: DiceRollState; sorted?: boolean }) =>
-    (state: RootState) => {
+    (state: RootState): Dice[] => {
         const { rollState, sorted } = options;
         let dice = rollState
             ? state.game.dice.filter((d) => d.rollState === rollState)
@@ -39,15 +40,18 @@ export const diceSelector =
         dice = sorted ? [...dice].sort((a, b) => a.value - b.value) : dice;
         return dice;
     };
-export const roomIdSelector = (state: RootState) => state.game.roomId;
-
-export const canPlaySelector = (playerIdx: number) => (state: RootState) =>
-    state.game.playerTurn === playerIdx;
-export const playerSelector = (playerIdx: number) => (state: RootState) =>
-    state.game.players[playerIdx];
-export const currentPlayerSelector = (state: RootState) =>
+export const roomIdSelector = (state: RootState): string => state.game.roomId;
+export const canPlaySelector =
+    (playerIdx: number) =>
+    (state: RootState): boolean =>
+        state.game.playerTurn === playerIdx;
+export const playerSelector =
+    (playerIdx: number) =>
+    (state: RootState): Player | null =>
+        state.game.players[playerIdx] ?? null;
+export const currentPlayerSelector = (state: RootState): Player =>
     state.game.players[state.game.playerTurn];
-export const playersSelector = (state: RootState) => state.game.players;
+export const playersSelector = (state: RootState): Player[] => state.game.players;
 
 /**
  * Actions

@@ -7,7 +7,8 @@ import {
     addPlayerToExistingRoom,
     removePlayerFromExistingRoom,
     currentPlayerCountSelector,
-    isNonHostWaitingSelector,
+    gameStatusSelector,
+    isHostSelector,
     playerCountSelector,
 } from "../MatchmakerReducer";
 
@@ -18,7 +19,8 @@ interface Props {
 const MatchmakerJoinExistingGame: React.FunctionComponent<Props> = ({ onGoBack }: Props) => {
     const playerCount = useAppSelector(playerCountSelector);
     const currentPlayerCount = useAppSelector(currentPlayerCountSelector);
-    const isNonHostWaiting = useAppSelector(isNonHostWaitingSelector);
+    const gameStatus = useAppSelector(gameStatusSelector);
+    const isHost = useAppSelector(isHostSelector);
 
     const dispatch = useAppDispatch();
 
@@ -39,7 +41,7 @@ const MatchmakerJoinExistingGame: React.FunctionComponent<Props> = ({ onGoBack }
     };
 
     const handleCancel = () => {
-        dispatch(removePlayerFromExistingRoom({ roomId }))
+        dispatch(removePlayerFromExistingRoom({ roomId }));
         onGoBack();
     };
 
@@ -85,7 +87,7 @@ const MatchmakerJoinExistingGame: React.FunctionComponent<Props> = ({ onGoBack }
 
     return (
         <Box display="flex" flexDirection="column">
-            {isNonHostWaiting ? renderWaitingScreen() : renderEnterCodeScreen()}
+            {!isHost && gameStatus === "WAITING" ? renderWaitingScreen() : renderEnterCodeScreen()}
             <Divider />
             <Button
                 className={classes.mediumMargin}

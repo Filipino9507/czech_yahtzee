@@ -1,6 +1,6 @@
 {
-    "editor.fontSize": 13,
-    "editor.fontFamily": "'Fira Code', Monaco, 'Courier New', monospace",
+    "editor.fontSize": 13.5,
+    "editor.fontFamily": "'Menlo', Monaco, 'Courier New', monospace",
     "restoreTerminals.terminals": [
         {
             "splitTerminals": [
