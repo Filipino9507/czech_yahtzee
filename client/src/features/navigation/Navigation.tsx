@@ -29,7 +29,7 @@ const Navigation: React.FunctionComponent = () => {
                     <Typography className={classes.title} variant="h6">
                         Yahtzee
                     </Typography>
-                    <Button variant="text" color="secondary" component={Link} to="/matchmaker">
+                    {/* <Button variant="text" color="secondary" component={Link} to="/matchmaker">
                         Join Game
                     </Button>
                     <Button variant="text" color="secondary" component={Link} to="/settings">
@@ -37,7 +37,7 @@ const Navigation: React.FunctionComponent = () => {
                     </Button>
                     <Button variant="text" color="secondary">
                         Logout
-                    </Button>
+                    </Button> */}
                 </Toolbar>
             </AppBar>
         </div>
