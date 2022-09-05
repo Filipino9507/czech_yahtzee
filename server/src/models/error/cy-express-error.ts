@@ -1,6 +1,6 @@
 export default class CYExpressError extends Error {
 
-    public message: string;
+    public override message: string;
     public status: number;
 
     public constructor(message: string, status: number = 500) {
@@ -11,7 +11,7 @@ export default class CYExpressError extends Error {
         Object.setPrototypeOf(this, CYExpressError.prototype);
     }
 
-    public toString(): string {
+    public override toString(): string {
         return `CYExpressError: [STATUS ${this.status}] ${this.message}`;
     }
 }

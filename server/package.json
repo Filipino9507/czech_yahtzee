@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc --project ./",
     "dev": "nodemon --watch './**/*.ts' --exec ts-node -r tsconfig-paths/register ./src/index.ts",
-    "test": "jest"
+    "test": "jest",
+    "start": "tsc --project ./ && node ./dist/index.js"
   },
   "author": "Filip Dilmaghani",
   "license": "ISC",
